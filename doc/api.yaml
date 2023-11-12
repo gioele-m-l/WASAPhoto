@@ -268,6 +268,50 @@ paths:
         "404":
           description: User not found
       
+  /users/{username}/username:
+    parameters:
+      - name: username
+        in: path
+        required: true
+        allowEmptyValue: false
+        schema: { $ref: "#/components/schemas/User/properties/username" }
+
+    put:
+      tags: ["User Operations"]
+      summary: Change the username
+      description: |
+        Change the username by chosing another valid one, an username to be valid
+        must match the regex defined in the User schema and must not be already
+        in use by another user.
+      
+      operationId: setMyUserName
+
+      security:
+        - BearerAuth: []
+      
+      requestBody:
+        content:
+          text/plain:
+            schema: { $ref: "#/components/schemas/User/properties/username" }
+      
+      responses:
+        "200":
+          description: Username changed successfully, return an User-summary object
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User-summary" }
+        
+        "400":
+          description: The username must match the regex defined in the schema User
+        
+        "401":
+          description: You must be logged in in order to make the request
+        
+        "403":
+          description: The username is already in use or you are trying to change someone else's username
+        
+        "404":
+          description: The user was not found
       
 
 
