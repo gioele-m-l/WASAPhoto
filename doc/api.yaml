@@ -35,7 +35,7 @@ components:
 #### SCHEMAS ####
   schemas:
 
-### USER'S RELATED SCHEMAS ###
+### USER RELATED SCHEMAS ###
 
 # User schema #
     User:
@@ -88,11 +88,11 @@ components:
           minimum: 0
           example: 10
         
-        profile-image:
+        profile-image-path:
           description: |
             String with the path to the profile image of this user.
           type: string
-          format: binary
+          format: uri
 
 # User summary schema # 
     User-summary:
@@ -103,7 +103,70 @@ components:
       properties:
         user-id:        { $ref: "#/components/schemas/User/properties/user-id" }
         username:       { $ref: "#/components/schemas/User/properties/username" }
-        profile-image:  { $ref: "#/components/schemas/User/properties/profile-image" }
+        profile-image-path:  { $ref: "#/components/schemas/User/properties/profile-image-path" }
+
+### PHOTO RELATED SCHEMAS ###
+
+# Image schema #
+    Image:
+      title: Image file
+      description: |
+        Binary string that represents an image.
+      type: string
+      format: binary
+
+# Photo schema #
+    Photo:
+      title: Photo
+      description: |
+        This object represents a single photo and it's informations.
+      
+      type: object
+      properties:
+        photo-id:
+          description: |
+            Identifier of the photo object.
+          type: integer
+          minimum: 0
+          readOnly: true
+      
+        timestamp:
+          description: |
+            Date and time of creation of this object.
+          type: string
+          format: date-time
+          readOnly: true
+        
+        owner: { $ref: "#/components/schemas/User/properties/user-id" } # Utilizzo l'user-id del proprietario
+
+        image-path:
+          description: |
+            Path to the image file.
+          type: string
+          format: uri
+          readOnly: true
+        
+        likes-count:
+          description: |
+            Number of likes of this photo.
+          type: integer
+          minimum: 0
+          readOnly: true
+        
+        comments-count:
+          description: |
+            Number of comments of this photo.
+          type: integer
+          minimum: 0
+          readOnly: true
+        
+        caption:
+          description: |
+            Short text that can describe the photo, chosen by the owner.
+          type: string
+          minLength: 0
+          maxLength: 100
+          readOnly: false
 
 
 
