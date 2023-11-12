@@ -1,0 +1,212 @@
+openapi: 3.0.3
+
+
+info:
+  title: WASAPhoto API specifications
+  description: |
+    API specifications of WASAPhoto, exam's project for
+    the course Web and Software Architecture 2023/2024.
+  version: 0.0.1
+
+
+
+servers:
+  - url: http://localhost:2324
+
+
+
+tags:
+  - name: Login
+  - name: User Operations
+
+
+
+components:
+#### SECURITY SCHEMES ####
+  securitySchemes:
+
+# BearerAuthentication #
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: string
+
+
+#### SCHEMAS ####
+  schemas:
+
+### USER'S RELATED SCHEMAS ###
+
+# User schema #
+    User:
+      title: User
+      description: |
+        This object represents a single user and it's information.
+      
+      type: object
+      properties:
+        user-id:
+          description: |
+            Main identifier of the user object, it can't be modified by the user.
+          type: integer
+          readOnly: true
+          minimum: 1
+          example: 1
+
+        username:
+          description: |
+            Name that the user has chosen, the user can be
+            found by other user with the username, a user
+            can change its username.
+          type: string
+          example: Mario
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+
+        followers-count:
+          description: |
+            The number of users that follow this user.
+          type: integer
+          readOnly: true
+          minimum: 0
+          example: 10
+        
+        followings-count:
+          description: |
+            The number of users that this user follows.
+          type: integer
+          readOnly: true
+          minimum: 0
+          example: 10
+        
+        photos-count:
+          description: |
+            The number of photos of this user.
+          type: integer
+          readOnly: true
+          minimum: 0
+          example: 10
+        
+        profile-image:
+          description: |
+            String with the path to the profile image of this user.
+          type: string
+          format: binary
+
+# User summary schema # 
+    User-summary:
+      title: User summary
+      description: |
+        Summary of User object infos
+      type: object
+      properties:
+        user-id:        { $ref: "#/components/schemas/User/properties/user-id" }
+        username:       { $ref: "#/components/schemas/User/properties/username" }
+        profile-image:  { $ref: "#/components/schemas/User/properties/profile-image" }
+
+
+
+paths:
+
+  /login:
+    post:
+      tags : ["Login"]
+      summary: Logs in the user
+      description: |
+        If the user does not exist, it will be created,
+        and an identifier is returned.
+        If the user exists, the user identifier is returned.
+      
+      operationId: doLogin
+      
+      requestBody:
+        description: User details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username: { $ref: "#/components/schemas/User/properties/username" }
+        required: true
+
+      responses:
+        "201":
+          description:  User log-in action successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user-id: { $ref: "#/components/schemas/User/properties/user-id" }
+                  auth-token: { $ref: "#/components/securitySchemes/BearerAuth/bearerFormat" }
+
+### USER OPERATIONS ###
+  /users/:
+    parameters: 
+      - name: search
+        in: query
+        schema: { $ref: "#/components/schemas/User/properties/username" }
+        required: false
+    
+    get:
+      tags: ["User Operations"]
+      summary: Return a list of user-summary objs
+      description: |
+        Return a list of user-summary objects, given an username return the
+        relative user-summary object.
+
+      operationId: listUsers
+      
+      security:
+        - BearerAuth: []
+      
+      responses:
+        "200":
+          description: Successfully returned a list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/User-summary" }
+                minItems: 0
+                maxItems: 100
+        
+        "400":
+          description: The parameter 'search' must be a string
+
+  /users/{username}/:
+    parameters:
+      - name: username
+        in: path
+        required: true
+        schema: { $ref: "#/components/schemas/User/properties/username" }
+    
+    get:
+      tags: ["User Operations"]
+      summary: Get the user informations of a single user
+      description: |
+        Return a User object relative to the specified username.
+      
+      operationId: getUserProfile
+
+      security:
+        - BearerAuth: []
+      
+      responses:
+        "200":
+          description: User successfully returned
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User" }
+        
+        "400":
+          description: The specified username in path must be a string
+        "404":
+          description: User not found
+      
+      
+
+
+
+
