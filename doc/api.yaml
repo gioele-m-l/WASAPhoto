@@ -291,8 +291,11 @@ paths:
       
       requestBody:
         content:
-          text/plain:
-            schema: { $ref: "#/components/schemas/User/properties/username" }
+          application/json:
+            schema: 
+              type: object
+              properties: 
+                new-username: { $ref: "#/components/schemas/User/properties/username" }
       
       responses:
         "200":
