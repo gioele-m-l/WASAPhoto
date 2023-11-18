@@ -331,7 +331,7 @@ paths:
         required: true
     
     put:
-      tags: ["User's Operation"]
+      tags: ["User Operation"]
       summary: Follow user
       description: |
         Add the specified user-id of an User to the followed users list of this user.
@@ -353,7 +353,7 @@ paths:
           description: user-id not found.
     
     delete:
-      tags: [User's Operations]
+      tags: [User Operations]
       summary: Unfollow user
       description: |
         Remove the specified user-id of an User to the followed users list of this user.
@@ -374,8 +374,57 @@ paths:
         "404":
           description: user-id not found.
 
+  /users/{username}/banned/{user-id}:
+    parameters:
+      - name: username
+        in: path
+        schema: { $ref: "#/components/schemas/User/properties/username" }
+        required: true
+      - name: user-id
+        in: path
+        schema: { $ref: "#/components/schemas/User/properties/user-id" }
+        required: true
+    
+    put:
+      tags: ["User Operations"]
+      summary: Ban user
+      description: |
+        Add the specified user-id to the banned list of this user.
+      
+      operationId: banUser
 
+      security:
+        - BearerAuth: []
+      
+      responses:
+        "204":
+          description: User banned successfully
+        
+        "400":
+          description: |
+            'username' in path must be a string and 'user-id' must be an integer.
+        
+        "404":
+          description: user-id not found.
+    
+    delete:
+      tags: ["User Operation"]
+      summary: Unban user
+      description: |
+        Remove the specified user-id from the banned list of this User.
+      
+      operationId: unbanUser
 
-
-
-
+      security:
+        - BearerAuth: []
+      
+      responses:
+        "204":
+          description: User unbanned successfully
+        
+        "400":
+          description: |
+            'username' in path must be a string and 'user-id' must be an integer.
+        
+        "404":
+          description: user-id not found.
