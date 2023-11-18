@@ -331,7 +331,7 @@ paths:
         required: true
     
     put:
-      tags: ["User Operation"]
+      tags: ["User Operations"]
       summary: Follow user
       description: |
         Add the specified user-id of an User to the followed users list of this user.
@@ -408,7 +408,7 @@ paths:
           description: user-id not found.
     
     delete:
-      tags: ["User Operation"]
+      tags: ["User Operations"]
       summary: Unban user
       description: |
         Remove the specified user-id from the banned list of this User.
