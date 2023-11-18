@@ -18,6 +18,7 @@ servers:
 tags:
   - name: Login
   - name: User Operations
+  - name: Photo Operations
 
 
 
@@ -428,3 +429,107 @@ paths:
         
         "404":
           description: user-id not found.
+
+
+### PHOTO OPERATIONS ###
+  /photos/:
+    parameters:
+      - name: page
+        in: query
+        description: |
+          This parameter is used to load a specified array of photo objects,
+          incrementing this number the server returns you new array of photos.
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 1
+      - name: numberOfPhotos
+        in: query
+        description: |
+          This parameter is used to tell the server how many photos you want per page,
+          the minimum is 0, the maximum is 20 and the default is 12.
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          maximum: 20
+          default: 12
+    
+    get:
+      tags: ["Photo Operations"]
+      summary: Get the stream of photos
+      description: |
+        Return an array of photos in reverse chronological order, different photos are
+        returned based on the page number.
+      
+      operationId: getMyStream
+
+      security:
+        - BearerAuth: []
+      
+      responses:
+        "200":
+          description: Array of photos successfully returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: integer
+                    minimum: 1
+                    maximum: 100
+                    default: 1
+                  photos:
+                    type: array
+                    items: { $ref: "#/components/schemas/Photo" }
+                    minItems: 0
+                    maxItems: 20
+                    default: 12
+
+        "400":
+          description: The parameters must be integers and must be inbounds.
+        
+        "401":
+          description: You have to login
+  
+  /images/{image-id}:
+    parameters:
+      - name: image-id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z]{3}$"
+    
+    get:
+      tags: ["Photo Operations"]
+      summary: Get an image
+      description: |
+        Given the specified path, return the image file.
+      
+      operationId: getImageFile
+
+      security:
+        - BearerAuth: []
+      
+      responses:
+        "200":
+          description: Image file returned successfully
+          content:
+            image/*:
+              schema: { $ref: "#/components/schemas/Image" }
+        
+        "400":
+          description: Invalid image path
+        
+        "401":
+          description: You need to login first
+        
+        "403":
+          description: You cannot retrieve this file
+        
+        "404":
+          description: Image not found
