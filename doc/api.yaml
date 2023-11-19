@@ -168,6 +168,35 @@ components:
           minLength: 0
           maxLength: 100
           readOnly: false
+    
+    Comment:
+      title: Comment
+      description: |
+        This object represent a comment, with a comment-id and a text.
+      
+      type: object
+      properties:
+        comment-id:
+          description: |
+            Identifier of the comment object.
+          type: integer
+          minimum: 0
+          readOnly: true
+        
+        timestamp:
+          description: |
+            The timestamp of this comment.
+          type: string
+          format: date-time
+          readOnly: true
+        
+        text:
+          description: |
+            Short text for the user to tell something.
+          type: string
+          minLength: 0
+          maxLength: 256
+          readOnly: false
 
 
 
@@ -538,7 +567,41 @@ paths:
         
         "401":
           description: Before uploading a photo you must be logged in
+
+  /photos/{photo-id}/:
+    parameters:
+      - name: photo-id
+        in: path
+        required: true
+        schema: { $ref: "#/components/schemas/Photo/properties/photo-id" }
+    
+    delete:
+      tags: ["Photo Operations"]
+      summary: Delete a photo
+      description: |
+        Delete the specified photo object, also delete all the likes, the comments and the image file
+        related to this object.
+      
+      operationId: deletePhoto
+
+      security:
+        - BearerAuth: []
+      
+      responses:
+        "204":
+          description: Photo deleted successfully
         
+        "400":
+          description: Something is wrong with the type of the photo-id parameter
+        
+        "401":
+          description: You must be logged in before deleting a photo
+        
+        "403":
+          description: You can't delete someone else's photo
+        
+        "404":
+          description: The specified photo was not found
   
   /images/{image-id}:
     parameters:
@@ -643,3 +706,82 @@ paths:
         
         "404":
           description: The specified photo was not found
+  
+  /photos/{photo-id}/comments/:
+    parameters:
+      - name: photo-id
+        in: path
+        required: true
+        schema: { $ref: "#/components/schemas/Photo/properties/photo-id" }
+    
+    post:
+      tags: ["Photo Operations"]
+      summary: Add a comment to the photo
+      description: |
+        Given a correct photo-id, add a comment to the comments list of the photo
+        and increase its comments-count.
+      
+      operationId: commentPhoto
+
+      security:
+        - BearerAuth: []
+      
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/Comment" }
+      
+      responses:
+        "200":
+          description: Comment added successfully
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Comment" }
+        
+        "400":
+          description: Something is wrong in the parameters or in the request body
+        
+        "401":
+          description: You must be logged in to comment a photo
+        
+        "404":
+          description: The specified photo was not found
+  
+  /photos/{photo-id}/comments/{comment-id}:
+    parameters:
+      - name: photo-id
+        in: path
+        required: true
+        schema: { $ref: "#/components/schemas/Photo/properties/photo-id" }
+      - name: comment-id
+        in: path
+        required: true
+        schema: { $ref: "#/components/schemas/Comment/properties/comment-id" }
+    
+    delete:
+      tags: ["Photo Operations"]
+      summary: Delete a comment
+      description: |
+        Given a photo-id and a comment-id if correct and the comment belong to the user
+        that want to delete it, delete the comment from the photo's list of comments.
+      
+      operationId: uncommentPhoto
+
+      security:
+        - BearerAuth: []
+      
+      responses:
+        "204":
+          description: Comment deleted successfully
+        
+        "400":
+          description: Something is wrong in the parameters, check the type
+        
+        "401":
+          description: You have to login before deleting a comment from a photo
+        
+        "403":
+          description: You cannot delete someone else's comment
+        
+        "404":
+          description: The specified photo or the specified comment was not found
