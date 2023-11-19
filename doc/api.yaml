@@ -578,3 +578,68 @@ paths:
         
         "404":
           description: Image not found
+  
+  /photos/{photo-id}/likes/{user-id}:
+    parameters:
+      - name: photo-id
+        in: path
+        required: true
+        schema: { $ref: "#/components/schemas/Photo/properties/photo-id" }
+      - name: user-id
+        in: path
+        required: true
+        schema: { $ref: "#/components/schemas/User/properties/user-id" }
+    
+    put:
+      tags: ["Photo Operations"]
+      summary: Like a photo
+      description: |
+        Specifying the photo and the user(me), add a like.
+      
+      operationId: likePhoto
+
+      security:
+        - BearerAuth: []
+      
+      responses:
+        "204":
+          description: Like added successfully
+        
+        "400":
+          description: Something wrong in the parameters
+        
+        "401":
+          description: You must be logged in before liking a photo
+        
+        "403":
+          description: You already like the photo, cannot like it again, unlike it first
+        
+        "404":
+          description: The specified photo was not found
+    
+    delete:
+      tags: ["Photo Operations"]
+      summary: Unlike a photo
+      description: |
+        Specifying the photo and the user(me), remove a like.
+      
+      operationId: unlikePhoto
+
+      security:
+        - BearerAuth: []
+      
+      responses:
+        "204":
+          description: Like removed successfully
+        
+        "400":
+          description: Something wrong in the parameters
+        
+        "401":
+          description: You must be logged in before liking a photo
+        
+        "403":
+          description: You already unlike the photo, cannot unlike it again, add a like first
+        
+        "404":
+          description: The specified photo was not found
