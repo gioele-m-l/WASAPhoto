@@ -433,7 +433,9 @@ paths:
 
 ### PHOTO OPERATIONS ###
   /photos/:
-    parameters:
+    
+    get:
+      parameters:
       - name: page
         in: query
         description: |
@@ -456,8 +458,7 @@ paths:
           minimum: 0
           maximum: 20
           default: 12
-    
-    get:
+      
       tags: ["Photo Operations"]
       summary: Get the stream of photos
       description: |
@@ -494,6 +495,50 @@ paths:
         
         "401":
           description: You have to login
+    
+    post:
+      tags: ["Photo Operations"]
+      summary: Post a photo
+      description: |
+        Publish a photo with informations related to it and the image file.
+      
+      operationId: uploadPhoto
+
+      security:
+        - BearerAuth: []
+      
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                caption:
+                  type: string
+                  minLength: 0
+                  maxLength: 100
+                
+                image: { $ref: "#/components/schemas/Image" }
+              required:
+                - image
+            encoding:
+              image:
+                contentType: image/png, image/jpeg
+      
+      responses:
+        "200":
+          description: Photo uploaded successfully
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Photo" }
+        
+        "400":
+          description: Something is wrong in the request
+        
+        "401":
+          description: Before uploading a photo you must be logged in
+        
   
   /images/{image-id}:
     parameters:
