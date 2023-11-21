@@ -1,0 +1,48 @@
+package api
+
+import "time"
+
+// User schema
+type User struct {
+	UserID           int    `json:"user-id"`
+	Username         string `json:"username"`
+	FollowersCount   int    `json:"followers-count"`
+	FollowingsCount  int    `json:"followings-count"`
+	PhotosCount      int    `json:"photos-count"`
+	ProfileImagePath string `json:"profile-image-path"`
+}
+
+// User summary
+type UserSummary struct {
+	UserID           int    `json:"user-id"`
+	Username         string `json:"username"`
+	ProfileImagePath string `json:"profile-image-path"`
+}
+
+// Image schema
+type Image struct {
+	File []byte
+}
+
+// Photo schema
+type Photo struct {
+	PhotoID       int       `json:"photo-id"`
+	Timestamp     time.Time `json:"timestamp"`
+	Owner         int       `json:"owner"` // UserID
+	ImagePath     string    `json:"image-path"`
+	LikesCount    int       `json:"likes-count"`
+	CommentsCount int       `json:"comments-count"`
+	Caption       string    `json:"caption"`
+}
+
+// Comment schema
+type Comment struct {
+	CommentID int       `json:"comment-id"`
+	Timestamp time.Time `json:"timestamp"`
+	Text      string    `json:"text"`
+}
+
+type Token string
+
+var Users = []User{}
+var Tokens = []Token{}
