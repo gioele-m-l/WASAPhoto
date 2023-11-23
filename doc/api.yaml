@@ -36,7 +36,43 @@ components:
 #### SCHEMAS ####
   schemas:
 
+### Minor schemas ###
+    Image-path: 
+      title: Image path
+      description: |
+        String with the path to the image.
+      type: string
+      format: uri
+    
+    Timestamp:
+      title: Timestamp
+      description: |
+        Date and time of creation of this object.
+      type: string
+      format: date-time
+      readOnly: true
+
+
 ### USER RELATED SCHEMAS ###
+    User-ID:
+      title: User ID
+      description: User unique identifier.
+      type: integer
+      minimum: 1
+      example: 1
+      readOnly: true
+
+    Username:
+      title: Username
+      description: |
+        Name that the user has chosen, the user can be
+        found by other user with the username, a user
+        can change its username.
+      type: string
+      example: Mario
+      pattern: '^.*?$'
+      minLength: 3
+      maxLength: 16
 
 # User schema #
     User:
@@ -46,25 +82,10 @@ components:
       
       type: object
       properties:
-        user-id:
-          description: |
-            Main identifier of the user object, it can't be modified by the user.
-          type: integer
-          readOnly: true
-          minimum: 1
-          example: 1
+        user-id: { $ref: "#/components/schemas/User-ID" }
 
-        username:
-          description: |
-            Name that the user has chosen, the user can be
-            found by other user with the username, a user
-            can change its username.
-          type: string
-          example: Mario
-          pattern: '^.*?$'
-          minLength: 3
-          maxLength: 16
-
+        username: { $ref: "#/components/schemas/Username" }
+          
         followers-count:
           description: |
             The number of users that follow this user.
@@ -89,11 +110,7 @@ components:
           minimum: 0
           example: 10
         
-        profile-image-path:
-          description: |
-            String with the path to the profile image of this user.
-          type: string
-          format: uri
+        profile-image-path: { $ref: "#/components/schemas/Image-path" }     
 
 # User summary schema # 
     User-summary:
@@ -102,11 +119,17 @@ components:
         Summary of User object infos
       type: object
       properties:
-        user-id:        { $ref: "#/components/schemas/User/properties/user-id" }
-        username:       { $ref: "#/components/schemas/User/properties/username" }
-        profile-image-path:  { $ref: "#/components/schemas/User/properties/profile-image-path" }
+        user-id:        { $ref: "#/components/schemas/User-ID" }
+        username:       { $ref: "#/components/schemas/Username" }
+        profile-image-path:  { $ref: "#/components/schemas/Image-path" }
 
 ### PHOTO RELATED SCHEMAS ###
+    Photo-ID:
+      title: Photo ID
+      description: Photo unique identifier.
+      type: integer
+      minimum: 0
+      readOnly: true
 
 # Image schema #
     Image:
@@ -124,28 +147,13 @@ components:
       
       type: object
       properties:
-        photo-id:
-          description: |
-            Identifier of the photo object.
-          type: integer
-          minimum: 0
-          readOnly: true
-      
-        timestamp:
-          description: |
-            Date and time of creation of this object.
-          type: string
-          format: date-time
-          readOnly: true
-        
-        owner: { $ref: "#/components/schemas/User/properties/user-id" } # Utilizzo l'user-id del proprietario
+        photo-id: { $ref: "#/components/schemas/Photo-ID" }
+  
+        timestamp: { $ref: "#/components/schemas/Timestamp" }
+          
+        owner: { $ref: "#/components/schemas/User-ID" } # Utilizzo l'user-id del proprietario
 
-        image-path:
-          description: |
-            Path to the image file.
-          type: string
-          format: uri
-          readOnly: true
+        image-path: { $ref: "#/components/schemas/Image-path" }
         
         likes-count:
           description: |
@@ -168,7 +176,25 @@ components:
           minLength: 0
           maxLength: 100
           readOnly: false
+
+### COMMENT SCHEMAS ###
+    Comment-ID:
+      title: Comment ID
+      description: |
+        Identifier of the comment object.
+      type: integer
+      minimum: 0
+      readOnly: true
     
+    Comment-text:
+      title: Comment text
+      description: |
+        Short text for the user to tell something.
+      type: string
+      minLength: 0
+      maxLength: 256
+      readOnly: false
+
     Comment:
       title: Comment
       description: |
@@ -176,28 +202,12 @@ components:
       
       type: object
       properties:
-        comment-id:
-          description: |
-            Identifier of the comment object.
-          type: integer
-          minimum: 0
-          readOnly: true
+        comment-id: { $ref: "#/components/schemas/Comment-ID" }
+           
+        timestamp: { $ref: "#/components/schemas/Timestamp" }
         
-        timestamp:
-          description: |
-            The timestamp of this comment.
-          type: string
-          format: date-time
-          readOnly: true
-        
-        text:
-          description: |
-            Short text for the user to tell something.
-          type: string
-          minLength: 0
-          maxLength: 256
-          readOnly: false
-
+        text: { $ref: "#/components/schemas/Comment-text" }
+          
 
 
 paths:
@@ -220,7 +230,7 @@ paths:
             schema:
               type: object
               properties:
-                username: { $ref: "#/components/schemas/User/properties/username" }
+                username: { $ref: "#/components/schemas/Username" }
         required: true
 
       responses:
@@ -231,15 +241,20 @@ paths:
               schema:
                 type: object
                 properties:
-                  user-id: { $ref: "#/components/schemas/User/properties/user-id" }
-                  auth-token: { $ref: "#/components/securitySchemes/BearerAuth/bearerFormat" }
+                  user-id: { $ref: "#/components/schemas/User-ID" }
+                  auth-token:
+                    description: |
+                      Token string for the bearer authentication.
+                    type: string
+                    minLength: 1
+                    maxLength: 30
 
 ### USER OPERATIONS ###
   /users/:
     parameters: 
       - name: search
         in: query
-        schema: { $ref: "#/components/schemas/User/properties/username" }
+        schema: { $ref: "#/components/schemas/Username" }
         required: false
     
     get:
@@ -273,7 +288,7 @@ paths:
       - name: username
         in: path
         required: true
-        schema: { $ref: "#/components/schemas/User/properties/username" }
+        schema: { $ref: "#/components/schemas/Username" }
     
     get:
       tags: ["User Operations"]
@@ -304,7 +319,7 @@ paths:
         in: path
         required: true
         allowEmptyValue: false
-        schema: { $ref: "#/components/schemas/User/properties/username" }
+        schema: { $ref: "#/components/schemas/Username" }
 
     put:
       tags: ["User Operations"]
@@ -325,7 +340,7 @@ paths:
             schema: 
               type: object
               properties: 
-                new-username: { $ref: "#/components/schemas/User/properties/username" }
+                new-username: { $ref: "#/components/schemas/Username" }
       
       responses:
         "200":
@@ -353,11 +368,11 @@ paths:
     parameters:
       - name: username
         in: path
-        schema: { $ref: "#/components/schemas/User/properties/username" }
+        schema: { $ref: "#/components/schemas/Username" }
         required: true
       - name: user-id
         in: path
-        schema: { $ref: "#/components/schemas/User/properties/user-id" }
+        schema: { $ref: "#/components/schemas/User-ID" }
         required: true
     
     put:
@@ -408,11 +423,11 @@ paths:
     parameters:
       - name: username
         in: path
-        schema: { $ref: "#/components/schemas/User/properties/username" }
+        schema: { $ref: "#/components/schemas/Username" }
         required: true
       - name: user-id
         in: path
-        schema: { $ref: "#/components/schemas/User/properties/user-id" }
+        schema: { $ref: "#/components/schemas/User-ID" }
         required: true
     
     put:
@@ -573,7 +588,7 @@ paths:
       - name: photo-id
         in: path
         required: true
-        schema: { $ref: "#/components/schemas/Photo/properties/photo-id" }
+        schema: { $ref: "#/components/schemas/Photo-ID" }
     
     delete:
       tags: ["Photo Operations"]
@@ -647,11 +662,11 @@ paths:
       - name: photo-id
         in: path
         required: true
-        schema: { $ref: "#/components/schemas/Photo/properties/photo-id" }
+        schema: { $ref: "#/components/schemas/Photo-ID" }
       - name: user-id
         in: path
         required: true
-        schema: { $ref: "#/components/schemas/User/properties/user-id" }
+        schema: { $ref: "#/components/schemas/User-ID" }
     
     put:
       tags: ["Photo Operations"]
@@ -712,7 +727,7 @@ paths:
       - name: photo-id
         in: path
         required: true
-        schema: { $ref: "#/components/schemas/Photo/properties/photo-id" }
+        schema: { $ref: "#/components/schemas/Photo-ID" }
     
     post:
       tags: ["Photo Operations"]
@@ -752,11 +767,11 @@ paths:
       - name: photo-id
         in: path
         required: true
-        schema: { $ref: "#/components/schemas/Photo/properties/photo-id" }
+        schema: { $ref: "#/components/schemas/Photo-ID" }
       - name: comment-id
         in: path
         required: true
-        schema: { $ref: "#/components/schemas/Comment/properties/comment-id" }
+        schema: { $ref: "#/components/schemas/Comment-ID" }
     
     delete:
       tags: ["Photo Operations"]
