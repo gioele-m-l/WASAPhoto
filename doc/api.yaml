@@ -361,6 +361,46 @@ paths:
         "404":
           description: The user was not found
   
+  /users/{username}/photos/:
+    parameters:
+      - name: username
+        in: path
+        required: true
+        schema: { $ref: "#/components/schemas/Username" }
+
+    get:
+      tags: ["User Operations", "Photo Operations"]
+      summary: Get user photos
+      description: |
+        Return an array of photo-id, the next request should be a get /photos/{photo-id}/ for each photo-id.
+      
+      operationId: getUserPhotos
+
+      security:
+        - BearerAuth: []
+      
+      responses:
+        "200":
+          description: Array of photo-ids returned successfully
+          content:
+            application/json:
+              schema:
+                description: Array of photo-ids.
+                type: array
+                items: { $ref: "#/components/schemas/Photo-ID" }
+                minItems: 0
+                maxItems: 15
+        
+        "400":
+          description: Bad request
+        
+        "401":
+          description: Unauthorized, you must be logged in
+        
+        "404":
+          description: User not found
+
+
 
   # AGGIUNGERE PATH followed e followers
 
