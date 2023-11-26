@@ -58,7 +58,7 @@ components:
       title: User ID
       description: User unique identifier.
       type: integer
-      minimum: 1
+      minimum: 0
       example: 1
       readOnly: true
 
