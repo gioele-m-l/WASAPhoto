@@ -55,14 +55,111 @@ func New(db *sql.DB) (AppDatabase, error) {
 		return nil, errors.New("database is required when building a AppDatabase")
 	}
 
+	// Turning on the support for foreign keys
+	_, errPragma := db.Exec(`PRAGMA foreign_keys= ON`)
+	if errPragma != nil {
+		return nil, fmt.Errorf("error setting pragmas: %w", errPragma)
+	}
+
 	// Check if table exists. If not, the database is empty, and we need to create the structure
 	var tableName string
-	err := db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='example_table';`).Scan(&tableName)
+	err := db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='Users';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
-		sqlStmt := `CREATE TABLE example_table (id INTEGER NOT NULL PRIMARY KEY, name TEXT);`
-		_, err = db.Exec(sqlStmt)
-		if err != nil {
-			return nil, fmt.Errorf("error creating database structure: %w", err)
+		/*
+			sqlStmt := `CREATE TABLE example_table (id INTEGER NOT NULL PRIMARY KEY, name TEXT);`
+			_, err = db.Exec(sqlStmt)
+			if err != nil {
+				return nil, fmt.Errorf("error creating database structure: %w", err)
+			}
+		*/
+
+		// Creating the Users table
+		usersTable := `CREATE TABLE IF NOT EXISTS Users (
+			userID INTEGER PRIMARY KEY AUTOINCREMENT,
+			username VARCHAR(16) NOT NULL
+		);`
+		_, errUsersTable := db.Exec(usersTable)
+		if errUsersTable != nil {
+			return nil, fmt.Errorf("error creating the Users table in database structure: %w", errUsersTable)
+		}
+
+		// Creating the Followers table
+		followersTable := `CREATE TABLE IF NOT EXISTS Followers (
+			followedID INTEGER,
+			followerID INTEGER,
+			PRIMARY KEY(followedID, followerID),
+			FOREIGN KEY(followedID) REFERENCES Users(userID) DELETE ON CASCADE,
+			FOREIGN KEY(followerID) REFERENCES Users(userID) DELETE ON CASCADE
+		);`
+		_, errFollowersTable := db.Exec(followersTable)
+		if errFollowersTable != nil {
+			return nil, fmt.Errorf("error creating the Followers table in database structure: %w", errFollowersTable)
+		}
+
+		// Creating the Blocked_users table
+		blockedUsersTable := `CREATE TABLE IF NOT EXISTS Blocked_users (
+			blockerID INTEGER,
+			blockedID INTEGER,
+			PRIMARY KEY(blockerID, blockedID),
+			FOREIGN KEY(blockerID) REFERENCES Users(userID) DELETE ON CASCADE,
+			FOREIGN KEY(blockedID) REFERENCES Users(userID) DELETE ON CASCADE
+		);`
+		_, errBlockedUsersTable := db.Exec(blockedUsersTable)
+		if errBlockedUsersTable != nil {
+			return nil, fmt.Errorf("error creating the Blocked_users table in database structure: %w", errBlockedUsersTable)
+		}
+
+		// Creating the Photos table
+		photosTable := `CREATE TABLE IF NOT EXISTS Photos (
+			photoID INTEGER PRIMARY KEY AUTOINCREMENT,
+			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+			caption VARCHAR(100),
+			path_to_image TEXT NOT NULL, 
+			owner INTEGER,
+			FOREIGN KEY(owner) REFERENCES Users(userID) DELETE ON CASCADE
+		);`
+		_, errPhotosTable := db.Exec(photosTable)
+		if errPhotosTable != nil {
+			return nil, fmt.Errorf("error creating the Photos table in database structure: %w", errUsersTable)
+		}
+
+		// Creating the Likes table
+		likesTable := `CREATE TABLE IF NOT EXISTS Likes (
+			photoID INTEGER,
+			likerID INTEGER,
+			PRIMARY KEY(photoID, likerID),
+			FOREIGN KEY(photoID) REFERENCES Photos(photoID) DELETE ON CASCADE,
+			FOREIGN KEY(likerID) REFERENCES Users(userID) DELETE ON CASCADE
+		);`
+		_, errLikesTable := db.Exec(likesTable)
+		if errLikesTable != nil {
+			return nil, fmt.Errorf("error creating the Likes table in database structure: %w", errLikesTable)
+		}
+
+		// Creating the Comments table
+		commentsTable := `CREATE TABLE IF NOT EXISTS Comments (
+			commentID INTEGER PRIMARY KEY AUTOINCREMENT,
+			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+			text VARCHAR(256),
+			commenterID INTEGER,
+			photoID INTEGER,
+			FOREIGN KEY(commenterID) REFERENCES Users(userID) DELETE ON CASCADE,
+			FOREIGN KEY(photoID) REFERENCES Photos(photoID) DELETE ON CASCADE
+		);`
+		_, errCommentsTable := db.Exec(commentsTable)
+		if errCommentsTable != nil {
+			return nil, fmt.Errorf("error creating the Comments table in database structure: %w", errCommentsTable)
+		}
+
+		// Creating the AuthTokens table
+		authTokensTable := `CREATE TABLE IF NOT EXISTS AuthTokens (
+			userID INTEGER PRIMARY KEY,
+			token VARCHAR(32) NOT NULL,
+			FOREIGN KEY(userID) REFERENCES Users(userID) DELETE ON CASCADE
+		);`
+		_, errAuthTokensTable := db.Exec(authTokensTable)
+		if errAuthTokensTable != nil {
+			return nil, fmt.Errorf("error creating the AuthTokens table in database structure: %w", errAuthTokensTable)
 		}
 	}
 
