@@ -246,8 +246,8 @@ paths:
                     description: |
                       Token string for the bearer authentication.
                     type: string
-                    minLength: 1
-                    maxLength: 30
+                    minLength: 32
+                    maxLength: 32
 
 ### USER OPERATIONS ###
   /users/:
