@@ -76,7 +76,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 		// Creating the Users table
 		usersTable := `CREATE TABLE IF NOT EXISTS Users (
 			userID INTEGER PRIMARY KEY AUTOINCREMENT,
-			username VARCHAR(16) NOT NULL,
+			username VARCHAR(16) UNIQUE NOT NULL,
 			path_to_profile_image TEXT NOT NULL
 		);`
 		_, errUsersTable := db.Exec(usersTable)
