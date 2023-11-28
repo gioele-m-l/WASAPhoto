@@ -10,6 +10,11 @@ type User struct {
 	PathToProfileImage string
 }
 
+type UserToken struct {
+	UserID int
+	Token  string
+}
+
 type Photo struct {
 	PhotoID     int
 	Timestamp   time.Time
