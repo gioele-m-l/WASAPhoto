@@ -1,6 +1,15 @@
 package api
 
-import "time"
+import (
+	"time"
+
+	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
+)
+
+// Username schema
+type Username struct {
+	Username string `json:"username"`
+}
 
 // User schema
 type User struct {
@@ -10,6 +19,38 @@ type User struct {
 	FollowingsCount  int    `json:"followings-count"`
 	PhotosCount      int    `json:"photos-count"`
 	ProfileImagePath string `json:"profile-image-path"`
+}
+
+func (u *User) FromDatabase(user database.User) {
+	u.UserID = user.UserID
+	u.Username = user.Username
+	u.ProfileImagePath = user.PathToProfileImage
+}
+
+func (u *User) ToDatabase() database.User {
+	return database.User{
+		UserID:             u.UserID,
+		Username:           u.Username,
+		PathToProfileImage: u.ProfileImagePath,
+	}
+}
+
+// User-token struct
+type UserToken struct {
+	UserID int
+	Token  string
+}
+
+func (ut *UserToken) FromDatabase(userToken database.UserToken) {
+	ut.UserID = userToken.UserID
+	ut.Token = userToken.Token
+}
+
+func (ut *UserToken) ToDatabase() database.UserToken {
+	return database.UserToken{
+		UserID: ut.UserID,
+		Token:  ut.Token,
+	}
 }
 
 // User summary
@@ -41,8 +82,3 @@ type Comment struct {
 	Timestamp time.Time `json:"timestamp"`
 	Text      string    `json:"text"`
 }
-
-type Token string
-
-var Users = []User{}
-var Tokens = []Token{}
