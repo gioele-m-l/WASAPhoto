@@ -18,7 +18,7 @@ func (db *appdbimpl) CreateToken(u User, token string) error {
 }
 
 // GetUser retrieve an existing user from the database with the username
-func (db *appdbimpl) GetUser(username string) (User, error) {
+func (db *appdbimpl) GetUserByUsername(username string) (User, error) {
 	var user User
 	err := db.c.QueryRow(`SELECT * FROM Users WHERE username = ?`, username).Scan(&user.UserID, &user.Username, &user.PathToProfileImage)
 	if err != nil {
