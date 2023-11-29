@@ -71,7 +71,6 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 	}
 	err = rt.db.CreateToken(userToken.ToDatabase())
 	if err != nil {
-		fmt.Fprintf(w, "error %w", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
