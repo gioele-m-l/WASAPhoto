@@ -7,13 +7,13 @@ import (
 
 // CreateUser insert a new user into the database
 func (db *appdbimpl) CreateUser(u User) error {
-	_, err := db.c.Exec(`INSERT INTO Users (username) VALUES (?)`, u.Username)
+	_, err := db.c.Exec(`INSERT INTO Users (username, path_to_profile_image) VALUES (?, "")`, u.Username)
 	return err
 }
 
 // CreateToken insert a new token for an existing user into the database
-func (db *appdbimpl) CreateToken(u User, token string) error {
-	_, err := db.c.Exec(`INSERT INTO AuthTokens (userID, token) VALUES (?, ?)`, u.UserID, token)
+func (db *appdbimpl) CreateToken(ut UserToken) error {
+	_, err := db.c.Exec(`INSERT INTO AuthTokens (userID, token) VALUES (?, ?)`, ut.UserID, ut.Token)
 	return err
 }
 

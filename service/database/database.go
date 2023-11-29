@@ -41,7 +41,7 @@ type AppDatabase interface {
 	// GetName() (string, error)
 	// SetName(name string) error
 	CreateUser(u User) error
-	CreateToken(u User, token string) error
+	CreateToken(ut UserToken) error
 	GetUserByUsername(username string) (User, error)
 	GetUserToken(userID int) (UserToken, error)
 
@@ -93,8 +93,8 @@ func New(db *sql.DB) (AppDatabase, error) {
 			followedID INTEGER,
 			followerID INTEGER,
 			PRIMARY KEY(followedID, followerID),
-			FOREIGN KEY(followedID) REFERENCES Users(userID) DELETE ON CASCADE,
-			FOREIGN KEY(followerID) REFERENCES Users(userID) DELETE ON CASCADE
+			FOREIGN KEY(followedID) REFERENCES Users(userID) ON DELETE CASCADE,
+			FOREIGN KEY(followerID) REFERENCES Users(userID) ON DELETE CASCADE
 		);`
 		_, errFollowersTable := db.Exec(followersTable)
 		if errFollowersTable != nil {
@@ -106,8 +106,8 @@ func New(db *sql.DB) (AppDatabase, error) {
 			blockerID INTEGER,
 			blockedID INTEGER,
 			PRIMARY KEY(blockerID, blockedID),
-			FOREIGN KEY(blockerID) REFERENCES Users(userID) DELETE ON CASCADE,
-			FOREIGN KEY(blockedID) REFERENCES Users(userID) DELETE ON CASCADE
+			FOREIGN KEY(blockerID) REFERENCES Users(userID) ON DELETE CASCADE,
+			FOREIGN KEY(blockedID) REFERENCES Users(userID) ON DELETE CASCADE
 		);`
 		_, errBlockedUsersTable := db.Exec(blockedUsersTable)
 		if errBlockedUsersTable != nil {
@@ -121,7 +121,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 			caption VARCHAR(100),
 			path_to_image TEXT NOT NULL, 
 			owner INTEGER,
-			FOREIGN KEY(owner) REFERENCES Users(userID) DELETE ON CASCADE
+			FOREIGN KEY(owner) REFERENCES Users(userID) ON DELETE CASCADE
 		);`
 		_, errPhotosTable := db.Exec(photosTable)
 		if errPhotosTable != nil {
@@ -133,8 +133,8 @@ func New(db *sql.DB) (AppDatabase, error) {
 			photoID INTEGER,
 			likerID INTEGER,
 			PRIMARY KEY(photoID, likerID),
-			FOREIGN KEY(photoID) REFERENCES Photos(photoID) DELETE ON CASCADE,
-			FOREIGN KEY(likerID) REFERENCES Users(userID) DELETE ON CASCADE
+			FOREIGN KEY(photoID) REFERENCES Photos(photoID) ON DELETE CASCADE,
+			FOREIGN KEY(likerID) REFERENCES Users(userID) ON DELETE CASCADE
 		);`
 		_, errLikesTable := db.Exec(likesTable)
 		if errLikesTable != nil {
@@ -148,8 +148,8 @@ func New(db *sql.DB) (AppDatabase, error) {
 			text VARCHAR(256),
 			commenterID INTEGER,
 			photoID INTEGER,
-			FOREIGN KEY(commenterID) REFERENCES Users(userID) DELETE ON CASCADE,
-			FOREIGN KEY(photoID) REFERENCES Photos(photoID) DELETE ON CASCADE
+			FOREIGN KEY(commenterID) REFERENCES Users(userID) ON DELETE CASCADE,
+			FOREIGN KEY(photoID) REFERENCES Photos(photoID) ON DELETE CASCADE
 		);`
 		_, errCommentsTable := db.Exec(commentsTable)
 		if errCommentsTable != nil {
@@ -160,7 +160,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 		authTokensTable := `CREATE TABLE IF NOT EXISTS AuthTokens (
 			userID INTEGER PRIMARY KEY,
 			token VARCHAR(32) NOT NULL,
-			FOREIGN KEY(userID) REFERENCES Users(userID) DELETE ON CASCADE
+			FOREIGN KEY(userID) REFERENCES Users(userID) ON DELETE CASCADE
 		);`
 		_, errAuthTokensTable := db.Exec(authTokensTable)
 		if errAuthTokensTable != nil {
