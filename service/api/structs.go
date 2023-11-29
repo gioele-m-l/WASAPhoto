@@ -37,8 +37,8 @@ func (u *User) ToDatabase() database.User {
 
 // User-token struct
 type UserToken struct {
-	UserID int
-	Token  string
+	UserID int    `json:"user-id"`
+	Token  string `json:"auth-token"`
 }
 
 func (ut *UserToken) FromDatabase(userToken database.UserToken) {
