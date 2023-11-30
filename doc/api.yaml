@@ -59,7 +59,7 @@ components:
       title: User ID
       description: User unique identifier.
       type: integer
-      minimum: 0
+      minimum: 1
       example: 1
       readOnly: true
 
@@ -129,7 +129,7 @@ components:
       title: Photo ID
       description: Photo unique identifier.
       type: integer
-      minimum: 0
+      minimum: 1
       readOnly: true
 
 # Image schema #
@@ -186,7 +186,7 @@ components:
       description: |
         Identifier of the comment object.
       type: integer
-      minimum: 0
+      minimum: 1
       readOnly: true
     
     Comment-text:
@@ -359,6 +359,48 @@ paths:
         
         "404":
           description: The user was not found
+  
+  /users/{username}/profile-image:
+    parameters:
+      - name: username
+        in: path
+        required: true
+        schema: { $ref: "#/components/schemas/Username" }
+    
+    put:
+      tags: ["User Operations", "Photo Operations"]
+      summary: Change teh user profile image
+      description: |
+        Upload an image that will be used as profile image for this user.
+      
+      operationId: uploadProfileImage
+
+      security:
+        - BearerAuth: []
+      
+      requestBody:
+        content:
+          image/*:
+            schema: { $ref: "#/components/schemas/Image" }
+      
+      responses:
+        "204":
+          description: New profile image uploaded
+        
+        "400":
+          description: The image file must be a png or a jpg
+        
+        "401":
+          description: You must be logged in order to use this operation
+        
+        "403":
+          description: You cannot change another user's profile image
+        
+        "404":
+          description: The specified user was not found
+        
+        "500":
+          description: Internal server error
   
   /users/{username}/photos/:
     parameters:
