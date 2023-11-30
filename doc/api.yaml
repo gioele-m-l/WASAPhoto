@@ -43,6 +43,7 @@ components:
         String with the path to the image.
       type: string
       format: uri
+      pattern: 'image[-]?[0-9]+\.(jpg|png)'
     
     Timestamp:
       title: Timestamp
@@ -138,6 +139,8 @@ components:
         Binary string that represents an image.
       type: string
       format: binary
+      minLength: 0
+      maxLength: 16000000
 
 # Photo schema #
     Photo:
@@ -227,10 +230,7 @@ paths:
         description: User details
         content:
           application/json:
-            schema:
-              type: object
-              properties:
-                username: { $ref: "#/components/schemas/Username" }
+            schema: { $ref: "#/components/schemas/Username" }
         required: true
 
       responses:
@@ -239,6 +239,7 @@ paths:
           content:
             application/json:
               schema:
+                description: Object containing the user-id and the auth token
                 type: object
                 properties:
                   user-id: { $ref: "#/components/schemas/User-ID" }
@@ -275,6 +276,7 @@ paths:
           content:
             application/json:
               schema:
+                description: Array of user-summary objects
                 type: array
                 items: { $ref: "#/components/schemas/User-summary" }
                 minItems: 0
@@ -337,10 +339,7 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: 
-              type: object
-              properties: 
-                new-username: { $ref: "#/components/schemas/Username" }
+            schema: { $ref: "#/components/schemas/Username" }
       
       responses:
         "200":
@@ -385,9 +384,9 @@ paths:
           content:
             application/json:
               schema:
-                description: Array of photo-ids.
+                description: Array of photos.
                 type: array
-                items: { $ref: "#/components/schemas/Photo-ID" }
+                items: { $ref: "#/components/schemas/Photo" }
                 minItems: 0
                 maxItems: 15
         
@@ -561,18 +560,20 @@ paths:
             application/json:
               schema:
                 type: object
+                description: Object containing an array of photos and the page number.
                 properties:
                   page:
+                    description: The number of the page.
                     type: integer
                     minimum: 1
                     maximum: 100
                     default: 1
                   photos:
+                    description: Array of photos.
                     type: array
                     items: { $ref: "#/components/schemas/Photo" }
                     minItems: 0
                     maxItems: 20
-                    default: 12
 
         "400":
           description: The parameters must be integers and must be inbounds.
@@ -596,9 +597,11 @@ paths:
         content:
           multipart/form-data:
             schema:
+              description: Object containing a caption and the image file.
               type: object
               properties:
                 caption:
+                  description: Short text where the user can say something.
                   type: string
                   minLength: 0
                   maxLength: 100
@@ -611,7 +614,7 @@ paths:
                 contentType: image/png, image/jpeg
       
       responses:
-        "200":
+        "201":
           description: Photo uploaded successfully
           content:
             application/json:
@@ -665,7 +668,7 @@ paths:
         required: true
         schema:
           type: string
-          pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z]{3}$"
+          pattern: 'image[-]?[0-9]+\.(jpg|png)'
     
     get:
       tags: ["Photo Operations"]
@@ -787,7 +790,7 @@ paths:
             schema: { $ref: "#/components/schemas/Comment" }
       
       responses:
-        "200":
+        "201":
           description: Comment added successfully
           content:
             application/json:
