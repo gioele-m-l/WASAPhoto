@@ -44,6 +44,7 @@ type AppDatabase interface {
 	CreateToken(ut UserToken) error
 	GetUserByUsername(username string) (User, error)
 	GetUserToken(userID int) (UserToken, error)
+	SetMyUserName(userID int, username string) error
 
 	Ping() error
 }

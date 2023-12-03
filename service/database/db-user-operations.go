@@ -40,3 +40,9 @@ func (db *appdbimpl) GetUserToken(userID int) (UserToken, error) {
 	}
 	return userTok, nil
 }
+
+// SetMyUserName allow to change one user's username if it doesn't exists
+func (db *appdbimpl) SetMyUserName(userID int, username string) error {
+	_, err := db.c.Exec(`UPDATE Users SET username = ? WHERE userID = ?`, username, userID)
+	return err
+}
