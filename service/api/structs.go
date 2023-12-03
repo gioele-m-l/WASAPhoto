@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"time"
 
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
@@ -9,6 +10,13 @@ import (
 // Username schema
 type Username struct {
 	Username string `json:"username"`
+}
+
+func (username *Username) checkUsername() error {
+	if len(username.Username) < 3 || len(username.Username) > 16 {
+		return errors.New("Invalid username")
+	}
+	return nil
 }
 
 // User schema
