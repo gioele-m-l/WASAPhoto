@@ -380,7 +380,9 @@ paths:
       
       requestBody:
         content:
-          image/*:
+          image/png:
+            schema: { $ref: "#/components/schemas/Image" }
+          image/jpg:
             schema: { $ref: "#/components/schemas/Image" }
       
       responses:
@@ -727,7 +729,9 @@ paths:
         "200":
           description: Image file returned successfully
           content:
-            image/*:
+            image/png:
+              schema: { $ref: "#/components/schemas/Image" }
+            image/jpg:
               schema: { $ref: "#/components/schemas/Image" }
         
         "400":
