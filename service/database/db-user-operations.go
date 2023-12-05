@@ -87,3 +87,33 @@ func (db *appdbimpl) ListUsers(substring string) ([]User, error) {
 
 	return users, err
 }
+
+// Get the number of followers of the specified user
+func (db *appdbimpl) GetUserFollowersCountByID(userID int) (int, error) {
+	var count int
+	err := db.c.QueryRow(`SELECT COUNT(followerID) FROM Followers WHERE followedID = ?`, userID).Scan(&count)
+	if err != nil {
+		return -1, err
+	}
+	return count, nil
+}
+
+// Get the number of followings of the specified user
+func (db *appdbimpl) GetUserFollowingsCountByID(userID int) (int, error) {
+	var count int
+	err := db.c.QueryRow(`SELECT COUNT(followedID) FROM Followers WHERE followerID = ?`, userID).Scan(&count)
+	if err != nil {
+		return -1, err
+	}
+	return count, nil
+}
+
+// Get the number of photos of the specified user
+func (db *appdbimpl) GetUserPhotosCountByID(userID int) (int, error) {
+	var count int
+	err := db.c.QueryRow(`SELECT COUNT(photoID) FROM Photos WHERE owner = ?`, userID).Scan(&count)
+	if err != nil {
+		return -1, err
+	}
+	return count, nil
+}

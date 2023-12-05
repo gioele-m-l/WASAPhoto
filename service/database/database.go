@@ -48,6 +48,10 @@ type AppDatabase interface {
 	GetUserIDByAuthToken(token string) (UserToken, error)
 	ListUsers(substring string) ([]User, error)
 
+	GetUserFollowersCountByID(userID int) (int, error)
+	GetUserFollowingsCountByID(userID int) (int, error)
+	GetUserPhotosCountByID(userID int) (int, error)
+
 	Ping() error
 }
 
