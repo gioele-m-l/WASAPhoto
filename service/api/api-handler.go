@@ -12,6 +12,7 @@ func (rt *_router) Handler() http.Handler {
 
 	rt.router.POST("/login", rt.wrap(rt.doLogin))
 	rt.router.PUT("/users/:username/username", rt.wrap(rt.setMyUserName))
+	rt.router.GET("/users/", rt.wrap(rt.listUsers))
 
 	// Special routes
 	rt.router.GET("/liveness", rt.liveness)

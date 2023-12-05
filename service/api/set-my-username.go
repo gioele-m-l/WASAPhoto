@@ -10,7 +10,7 @@ import (
 )
 
 func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	w.Header().Set("content-type", "application/json")
+	w.Header().Set("Content-type", "Application/json")
 	// Check if the username format is correct
 	var username Username
 	username.Username = ps.ByName("username")

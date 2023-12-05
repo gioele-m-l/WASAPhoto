@@ -46,3 +46,44 @@ func (db *appdbimpl) SetMyUserName(userID int, username string) error {
 	_, err := db.c.Exec(`UPDATE Users SET username = ? WHERE userID = ?`, username, userID)
 	return err
 }
+
+// Get the userID of the user by using its authentication token
+func (db *appdbimpl) GetUserIDByAuthToken(token string) (UserToken, error) {
+	var userTok UserToken
+	err := db.c.QueryRow(`SELECT * FROM AuthTokens WHERE token = ?`, token).Scan(&userTok.UserID, &userTok.Token)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return userTok, errors.New("User's token doesn't exists")
+		}
+	}
+	return userTok, err
+}
+
+// Get a list of users (max 100)
+func (db *appdbimpl) ListUsers(substring string) ([]User, error) {
+	var users []User
+	stmt, err := db.c.Prepare("SELECT * FROM Users WHERE username LIKE ? LIMIT 100")
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query(substring + "%")
+	defer rows.Close()
+
+	for rows.Next() {
+		var u User
+		err := rows.Scan(&u.UserID, &u.Username, &u.PathToProfileImage)
+		if err != nil {
+			return users, err
+		}
+		users = append(users, u)
+	}
+
+	err = rows.Err()
+	if err != nil {
+		return users, err
+	}
+
+	return users, err
+}
