@@ -4,27 +4,36 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
+	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
 )
 
-// getHelloWorld is an example of HTTP endpoint that returns "Hello world!" as a plain text
-func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	w.Header().Set("content-type", "application/json")
+func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+	w.Header().Set("Content-ype", "application/json")
 
 	if r.Header.Get("Content-Type") != "application/json" {
-		http.Error(w, "Content-Type header is not application/json", http.StatusUnsupportedMediaType)
+		ctx.Logger.Error("Content-Type header is not application/json")
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	var username Username
 	err := json.NewDecoder(r.Body).Decode(&username)
 	if err != nil {
+		ctx.Logger.WithError(err).Error("Invalid json")
 		w.WriteHeader(http.StatusBadRequest)
 		return
-	} // Add a check to the username
+	}
+
+	// Check if it's a valid username
+	err = username.checkUsername()
+	if err != nil {
+		ctx.Logger.WithError(err).Error("Invalid username")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	user := User{
 		UserID:           -1,
@@ -41,11 +50,13 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		// The user is already in the database
 		userDB, err := rt.db.GetUserByUsername(user.Username)
 		if err != nil {
+			ctx.Logger.Error(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		tokenDB, err := rt.db.GetUserToken(userDB.UserID)
 		if err != nil {
+			ctx.Logger.Error(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -53,29 +64,39 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		userToken.FromDatabase(tokenDB)
 		w.WriteHeader(http.StatusOK)
 
-		json.NewEncoder(w).Encode(userToken)
+		err = json.NewEncoder(w).Encode(userToken)
+		if err != nil {
+			ctx.Logger.WithError(err).Error("Error in response")
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		return
 	}
 
 	userDB, err := rt.db.GetUserByUsername(user.Username)
 	if err != nil {
+		ctx.Logger.Error(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	token := getMD5Hash(user.Username)
-	fmt.Println(token)
 	userToken := UserToken{
 		UserID: userDB.UserID,
 		Token:  token,
 	}
 	err = rt.db.CreateToken(userToken.ToDatabase())
 	if err != nil {
+		ctx.Logger.Error(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	json.NewEncoder(w).Encode(userToken)
+	err = json.NewEncoder(w).Encode(userToken)
+	if err != nil {
+		ctx.Logger.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func getMD5Hash(username string) string {

@@ -45,6 +45,8 @@ type AppDatabase interface {
 	GetUserByUsername(username string) (User, error)
 	GetUserToken(userID int) (UserToken, error)
 	SetMyUserName(userID int, username string) error
+	GetUserIDByAuthToken(token string) (UserToken, error)
+	ListUsers(substring string) ([]User, error)
 
 	Ping() error
 }
