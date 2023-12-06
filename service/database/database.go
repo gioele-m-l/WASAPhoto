@@ -42,7 +42,10 @@ type AppDatabase interface {
 	// SetName(name string) error
 	CreateUser(u User) error
 	CreateToken(ut UserToken) error
+
 	GetUserByUsername(username string) (User, error)
+	GetUserByID(userID int) (User, error)
+
 	GetUserToken(userID int) (UserToken, error)
 	SetMyUserName(userID int, username string) error
 	GetUserIDByAuthToken(token string) (UserToken, error)
@@ -51,6 +54,8 @@ type AppDatabase interface {
 	GetUserFollowersCountByID(userID int) (int, error)
 	GetUserFollowingsCountByID(userID int) (int, error)
 	GetUserPhotosCountByID(userID int) (int, error)
+
+	FollowUser(followerID int, followedID int) error
 
 	Ping() error
 }

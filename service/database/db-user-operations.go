@@ -117,3 +117,22 @@ func (db *appdbimpl) GetUserPhotosCountByID(userID int) (int, error) {
 	}
 	return count, nil
 }
+
+// Get the user object specifying the userID
+func (db *appdbimpl) GetUserByID(userID int) (User, error) {
+	var user User
+	err := db.c.QueryRow(`SELECT * FROM Users WHERE userID = ?`, userID).Scan(&user.UserID, &user.Username, &user.PathToProfileImage)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+// Insert a new relationship Follower in db
+func (db *appdbimpl) FollowUser(followerID int, followedID int) error {
+	_, err := db.c.Exec(`INSERT INTO Followers (followedID, followerID) VALUES (?, ?)`, followedID, followerID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
