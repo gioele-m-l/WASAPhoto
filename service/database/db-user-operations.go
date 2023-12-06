@@ -87,3 +87,52 @@ func (db *appdbimpl) ListUsers(substring string) ([]User, error) {
 
 	return users, err
 }
+
+// Get the number of followers of the specified user
+func (db *appdbimpl) GetUserFollowersCountByID(userID int) (int, error) {
+	var count int
+	err := db.c.QueryRow(`SELECT COUNT(followerID) FROM Followers WHERE followedID = ?`, userID).Scan(&count)
+	if err != nil {
+		return -1, err
+	}
+	return count, nil
+}
+
+// Get the number of followings of the specified user
+func (db *appdbimpl) GetUserFollowingsCountByID(userID int) (int, error) {
+	var count int
+	err := db.c.QueryRow(`SELECT COUNT(followedID) FROM Followers WHERE followerID = ?`, userID).Scan(&count)
+	if err != nil {
+		return -1, err
+	}
+	return count, nil
+}
+
+// Get the number of photos of the specified user
+func (db *appdbimpl) GetUserPhotosCountByID(userID int) (int, error) {
+	var count int
+	err := db.c.QueryRow(`SELECT COUNT(photoID) FROM Photos WHERE owner = ?`, userID).Scan(&count)
+	if err != nil {
+		return -1, err
+	}
+	return count, nil
+}
+
+// Get the user object specifying the userID
+func (db *appdbimpl) GetUserByID(userID int) (User, error) {
+	var user User
+	err := db.c.QueryRow(`SELECT * FROM Users WHERE userID = ?`, userID).Scan(&user.UserID, &user.Username, &user.PathToProfileImage)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+// Insert a new relationship Follower in db
+func (db *appdbimpl) FollowUser(followerID int, followedID int) error {
+	_, err := db.c.Exec(`INSERT INTO Followers (followedID, followerID) VALUES (?, ?)`, followedID, followerID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

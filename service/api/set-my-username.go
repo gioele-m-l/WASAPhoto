@@ -16,7 +16,7 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 	username.Username = ps.ByName("username")
 	err := username.checkUsername()
 	if err != nil {
-		ctx.Logger.WithError(err).Error("")
+		ctx.Logger.Error(err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
