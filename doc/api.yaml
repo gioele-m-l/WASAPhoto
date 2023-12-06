@@ -445,9 +445,9 @@ paths:
 
 
 
-  # AGGIUNGERE PATH followed e followers
+  # AGGIUNGERE PATH: followers
 
-  /users/{username}/followed/{user-id}:
+  /users/{username}/followings/{user-id}:
     parameters:
       - name: username
         in: path
