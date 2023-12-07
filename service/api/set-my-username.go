@@ -33,7 +33,7 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 	user.FromDatabase(userDB)
 
 	// Check if the user is authenticated
-	authToken := r.Header.Get("Authentication")
+	authToken := r.Header.Get("Authorization")
 	if authToken == "" {
 		ctx.Logger.WithError(errors.New("Missing user authentication token")).Error("Authentication failed")
 		w.WriteHeader(http.StatusUnauthorized)

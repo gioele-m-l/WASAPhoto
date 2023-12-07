@@ -57,6 +57,10 @@ type AppDatabase interface {
 
 	FollowUser(followerID int, followedID int) error
 
+	CheckBan(blockerID int, blockedID int) (bool, error)
+	BanUser(blockerID int, blockedID int) error
+	UnbanUser(blockerID int, blockedID int) error
+
 	Ping() error
 }
 

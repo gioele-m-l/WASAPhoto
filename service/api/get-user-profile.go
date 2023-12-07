@@ -14,7 +14,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	w.Header().Set("Content-Type", "application/json")
 
 	// Check if the user is authenticated
-	authToken := r.Header.Get("Authentication")
+	authToken := r.Header.Get("Authorization")
 	if authToken == "" {
 		ctx.Logger.WithError(errors.New("Missing user authentication token")).Error("Authentication failed")
 		w.WriteHeader(http.StatusUnauthorized)

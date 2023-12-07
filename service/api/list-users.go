@@ -18,7 +18,7 @@ func (rt *_router) listUsers(w http.ResponseWriter, r *http.Request, ps httprout
 	}
 
 	// Get the authentication token and check if it's a registered user
-	authToken := r.Header.Get("Authentication")
+	authToken := r.Header.Get("Authorization")
 	if authToken == "" {
 		ctx.Logger.WithError(errors.New("Missing user authentication token")).Error("Authentication failed")
 		w.WriteHeader(http.StatusUnauthorized)

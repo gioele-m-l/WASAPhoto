@@ -136,3 +136,35 @@ func (db *appdbimpl) FollowUser(followerID int, followedID int) error {
 	}
 	return nil
 }
+
+// Insert a new relationship Blocked_users in db
+func (db *appdbimpl) BanUser(blockerID int, blockedID int) error {
+	_, err := db.c.Exec(`INSERT INTO Blocked_users (blockerID, blockedID) VALUES (?, ?)`, blockerID, blockedID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Delete an existent relationship Blocked_users in db
+func (db *appdbimpl) UnbanUser(blockerID int, blockedID int) error {
+	_, err := db.c.Exec(`DELETE FROM Blocked_users  WHERE blockerID = ? AND blockedID = ?`, blockerID, blockedID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Check if there is the relationship between the given user-ids
+func (db *appdbimpl) CheckBan(blockerID int, blockedID int) (bool, error) {
+	var count int
+	err := db.c.QueryRow(`SELECT COUNT(*) FROM Blocked_user WHERE blockerID = ? AND blockedID = ?`, blockerID, blockedID).Scan(&count)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil
+		} else {
+			return false, err
+		}
+	}
+	return true, nil
+}

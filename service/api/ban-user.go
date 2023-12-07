@@ -9,7 +9,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	// Check if the authentication token exists
 	authToken := r.Header.Get("Authorization")
 	if authToken == "" {
@@ -29,7 +29,7 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	username.Username = ps.ByName("username")
 	err = username.checkUsername()
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Error in followUser function: invalid username")
+		ctx.Logger.WithError(err).Error("Error in banUser function: invalid username")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -37,14 +37,14 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	// Check if the user with that username exists
 	userDB, err := rt.db.GetUserByUsername(username.Username)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Error in followUser function: user not found")
+		ctx.Logger.WithError(err).Error("Error in banUser function: user not found")
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	// Check if the user and the authentication token are related
 	if userDB.UserID != userTok.UserID {
-		ctx.Logger.Error("Error in followUser function: forbidden")
+		ctx.Logger.Error("Error in banUser function: forbidden")
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
@@ -52,56 +52,58 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	// Check the userID value provided
 	userID2, err := strconv.Atoi(ps.ByName("user-id"))
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Error in followUser function: error converting string to int")
+		ctx.Logger.WithError(err).Error("Error in banUser function: error converting string to int")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	// Check if the userID provided is the same of this user
 	if userID2 == userDB.UserID {
-		ctx.Logger.Warning("followUser function: user cannot follow itself")
+		ctx.Logger.Warning("banUser function: user cannot ban itself")
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
+
 	// Check if the user exists in db
 	userDB2, err := rt.db.GetUserByID(userID2)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Error in followUser function: specified userID not found")
+		ctx.Logger.WithError(err).Error("Error in banUser function: specified userID not found")
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	// Check if this user is blocked by the user with the specified userID
+	// Check if the other user has banned this user first
 	e, err := rt.db.CheckBan(userDB2.UserID, userDB.UserID)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("followUser: internal server error")
+		ctx.Logger.WithError(err).Error("banUser: internal server errror")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	if e {
-		ctx.Logger.Info("The user is blocked by other user")
+		ctx.Logger.Info("banUser: the other user has banned this user")
 		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-	// Check if the user has blocked the other user
-	e, err = rt.db.CheckBan(userDB.UserID, userDB2.UserID)
-	if err != nil {
-		ctx.Logger.WithError(err).Error("followUser: internal server error")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if e {
-		ctx.Logger.Info("The user blocked the other user")
-		w.WriteHeader(http.StatusForbidden)
 		return
 	}
 
 	// Check if the relationship already exists
-	err = rt.db.FollowUser(userDB.UserID, userDB2.UserID)
+	e, err = rt.db.CheckBan(userDB.UserID, userDB2.UserID)
 	if err != nil {
-		ctx.Logger.WithError(err).Warning("FollowUser: this relationship already exists")
+		ctx.Logger.WithError(err).Error("banUser: internal server errror")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if e {
+		ctx.Logger.Info("banUser: the relationship already exists")
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
+	// Create the new relationship
+	err = rt.db.BanUser(userDB.UserID, userDB2.UserID)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("banUser: internal server error")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	w.WriteHeader(http.StatusNoContent)
 }
