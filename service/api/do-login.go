@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
@@ -62,7 +63,7 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		}
 		var userToken UserToken
 		userToken.FromDatabase(tokenDB)
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusCreated)
 
 		err = json.NewEncoder(w).Encode(userToken)
 		if err != nil {
@@ -79,7 +80,7 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	token := getMD5Hash(user.Username)
+	token := getMD5Hash(user.Username + strconv.Itoa(userDB.UserID))
 	userToken := UserToken{
 		UserID: userDB.UserID,
 		Token:  token,
