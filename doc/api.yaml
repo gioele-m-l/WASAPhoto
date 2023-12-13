@@ -44,6 +44,8 @@ components:
       type: string
       format: uri
       pattern: 'image[-]?[0-9]+\.(jpg|png)'
+      minLength: 1
+      maxLength: 50
     
     Timestamp:
       title: Timestamp
@@ -51,6 +53,9 @@ components:
         Date and time of creation of this object.
       type: string
       format: date-time
+      pattern: '^[0-9]{4}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]$'
+      minLength: 1
+      maxLength: 50
       readOnly: true
 
 
@@ -710,9 +715,7 @@ paths:
       - name: image-id
         in: path
         required: true
-        schema:
-          type: string
-          pattern: 'image[-]?[0-9]+\.(jpg|png)'
+        schema: { $ref: "#/components/schemas/Image-path" }
     
     get:
       tags: ["Photo Operations"]
