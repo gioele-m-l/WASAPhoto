@@ -20,13 +20,13 @@ func (rt *_router) listUsers(w http.ResponseWriter, r *http.Request, ps httprout
 	// Get the authentication token and check if it's a registered user
 	authToken := r.Header.Get("Authorization")
 	if authToken == "" {
-		ctx.Logger.WithError(errors.New("Missing user authentication token")).Error("Authentication failed")
+		ctx.Logger.WithError(errors.New("missing user authorization token")).Error("authentication failed")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 	_, err := rt.db.GetUserIDByAuthToken(authToken)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Invalid user token")
+		ctx.Logger.WithError(err).Error("invalid user token")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -35,7 +35,7 @@ func (rt *_router) listUsers(w http.ResponseWriter, r *http.Request, ps httprout
 	var users []UserSummary
 	usersDB, err := rt.db.ListUsers(substring)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Error in returning the users")
+		ctx.Logger.WithError(err).Error("error in returning the users")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -50,7 +50,7 @@ func (rt *_router) listUsers(w http.ResponseWriter, r *http.Request, ps httprout
 
 	err = json.NewEncoder(w).Encode(users)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Error in response")
+		ctx.Logger.WithError(err).Error("error in response")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

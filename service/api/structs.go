@@ -14,7 +14,7 @@ type Username struct {
 
 func (username *Username) checkUsername() error {
 	if len(username.Username) < 3 || len(username.Username) > 16 {
-		return errors.New("Invalid username")
+		return errors.New("invalid username")
 	}
 	return nil
 }

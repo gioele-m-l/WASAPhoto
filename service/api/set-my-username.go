@@ -25,7 +25,7 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 
 	userDB, err := rt.db.GetUserByUsername(username.Username)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("User not found")
+		ctx.Logger.WithError(err).Error("user not found")
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -35,18 +35,18 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 	// Check if the user is authenticated
 	authToken := r.Header.Get("Authorization")
 	if authToken == "" {
-		ctx.Logger.WithError(errors.New("Missing user authentication token")).Error("Authentication failed")
+		ctx.Logger.WithError(errors.New("missing user authorization token")).Error("authentication failed")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 	userTokenDB, err := rt.db.GetUserToken(user.UserID)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("User token not found")
+		ctx.Logger.WithError(err).Error("user token not found")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	if userTokenDB.Token != authToken {
-		ctx.Logger.WithError(errors.New("Forbidden")).Error("Provided user token differ from the user's token in path")
+		ctx.Logger.WithError(errors.New("forbidden")).Error("provided user token differ from the user's token in path")
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
@@ -60,7 +60,7 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 	// Check the json provided
 	err = json.NewDecoder(r.Body).Decode(&username2)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Invalid json")
+		ctx.Logger.WithError(err).Error("invalid json")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -68,7 +68,7 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 	// Check the username provided
 	err = username2.checkUsername()
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Invalid username: ", username2.Username)
+		ctx.Logger.WithError(err).Error("invalid username: ", username2.Username)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -79,13 +79,13 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 		err = rt.db.SetMyUserName(user.UserID, username2.Username)
 		ctx.Logger.Info(user.UserID, username2.Username)
 		if err != nil {
-			ctx.Logger.WithError(err).Error("Error in setting the username")
+			ctx.Logger.WithError(err).Error("error in setting the username")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		userDB, err = rt.db.GetUserByUsername(username2.Username)
 		if err != nil {
-			ctx.Logger.WithError(err).Error("Error in getting back the modified user")
+			ctx.Logger.WithError(err).Error("error in getting back the modified user")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -98,11 +98,11 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 
 		err = json.NewEncoder(w).Encode(userSum)
 		if err != nil {
-			ctx.Logger.WithError(err).Error("Error in response")
+			ctx.Logger.WithError(err).Error("error in response")
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 		return
 	}
-	ctx.Logger.Info("User already exists")
+	ctx.Logger.Info("user already exists")
 	w.WriteHeader(http.StatusForbidden)
 }

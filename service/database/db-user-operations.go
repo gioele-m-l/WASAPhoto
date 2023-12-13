@@ -35,7 +35,7 @@ func (db *appdbimpl) GetUserToken(userID int) (UserToken, error) {
 	err := db.c.QueryRow(`SELECT * FROM AuthTokens WHERE userID = ?`, userID).Scan(&userTok.UserID, &userTok.Token)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return userTok, errors.New("User's token does not exists")
+			return userTok, errors.New("user's token does not exists")
 		}
 	}
 	return userTok, nil
@@ -53,7 +53,7 @@ func (db *appdbimpl) GetUserIDByAuthToken(token string) (UserToken, error) {
 	err := db.c.QueryRow(`SELECT * FROM AuthTokens WHERE token = ?`, token).Scan(&userTok.UserID, &userTok.Token)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return userTok, errors.New("User's token doesn't exists")
+			return userTok, errors.New("user's token doesn't exists")
 		}
 	}
 	return userTok, err
@@ -69,6 +69,9 @@ func (db *appdbimpl) ListUsers(substring string) ([]User, error) {
 	defer stmt.Close()
 
 	rows, err := stmt.Query(substring + "%")
+	if err != nil {
+		return nil, err
+	}
 	defer rows.Close()
 
 	for rows.Next() {
@@ -128,9 +131,18 @@ func (db *appdbimpl) GetUserByID(userID int) (User, error) {
 	return user, nil
 }
 
-// Insert a new relationship Follower in db
+// Insert a new relationship Followers in db
 func (db *appdbimpl) FollowUser(followerID int, followedID int) error {
 	_, err := db.c.Exec(`INSERT INTO Followers (followedID, followerID) VALUES (?, ?)`, followedID, followerID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Delete an existent relationship Followers in db
+func (db *appdbimpl) UnfollowUser(followerID int, followedID int) error {
+	_, err := db.c.Exec(`DELETE FROM Followers WHERE followedID = ? AND followerID = ?`, followedID, followerID)
 	if err != nil {
 		return err
 	}
@@ -155,10 +167,10 @@ func (db *appdbimpl) UnbanUser(blockerID int, blockedID int) error {
 	return nil
 }
 
-// Check if there is the relationship between the given user-ids
+// Check if there is the relationship between the given user-ids for Blocked_user
 func (db *appdbimpl) CheckBan(blockerID int, blockedID int) (bool, error) {
 	var count int
-	err := db.c.QueryRow(`SELECT COUNT(*) FROM Blocked_user WHERE blockerID = ? AND blockedID = ?`, blockerID, blockedID).Scan(&count)
+	err := db.c.QueryRow(`SELECT COUNT(*) FROM Blocked_users WHERE blockerID = ? AND blockedID = ?`, blockerID, blockedID).Scan(&count)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return false, nil

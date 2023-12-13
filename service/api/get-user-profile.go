@@ -16,13 +16,13 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	// Check if the user is authenticated
 	authToken := r.Header.Get("Authorization")
 	if authToken == "" {
-		ctx.Logger.WithError(errors.New("Missing user authentication token")).Error("Authentication failed")
+		ctx.Logger.WithError(errors.New("missing user authorization token")).Error("authentication failed")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 	_, err := rt.db.GetUserIDByAuthToken(authToken)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Invalid user token")
+		ctx.Logger.WithError(err).Error("invalid user token")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -39,7 +39,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	// Existing user ?
 	userDB, err := rt.db.GetUserByUsername(username.Username)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("User not found")
+		ctx.Logger.WithError(err).Error("user not found")
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -52,21 +52,21 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	// Get followers
 	user.FollowersCount, err = rt.db.GetUserFollowersCountByID(user.UserID)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Error in retrieving the followers count")
+		ctx.Logger.WithError(err).Error("error in retrieving the followers count")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	// Get followings
 	user.FollowingsCount, err = rt.db.GetUserFollowingsCountByID(user.UserID)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Error in retrieving the followings count")
+		ctx.Logger.WithError(err).Error("error in retrieving the followings count")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	// Get the photos
 	user.PhotosCount, err = rt.db.GetUserPhotosCountByID(user.UserID)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Error in retrieving the photos count")
+		ctx.Logger.WithError(err).Error("error in retrieving the photos count")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -74,7 +74,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	// Sending the response
 	err = json.NewEncoder(w).Encode(user)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("Error sending the getUserProfile response")
+		ctx.Logger.WithError(err).Error("error sending the getUserProfile response")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

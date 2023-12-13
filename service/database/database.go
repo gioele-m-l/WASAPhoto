@@ -56,6 +56,7 @@ type AppDatabase interface {
 	GetUserPhotosCountByID(userID int) (int, error)
 
 	FollowUser(followerID int, followedID int) error
+	UnfollowUser(followerID int, followedID int) error
 
 	CheckBan(blockerID int, blockedID int) (bool, error)
 	BanUser(blockerID int, blockedID int) error
