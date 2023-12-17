@@ -100,7 +100,7 @@ func run() error {
 
 	// Create the directory for the images files
 	dirPath := "./images/"
-	err = os.Mkdir(dirPath, 0754)
+	err = os.MkdirAll(dirPath, 0754)
 	if err != nil {
 		logger.WithError(err).Error("error creating '/images/' directory")
 		return fmt.Errorf("creating '/images/' directory: %w", err)

@@ -63,6 +63,10 @@ type AppDatabase interface {
 	UnbanUser(blockerID int, blockedID int) error
 
 	UpdateProfileImage(uID int, path string) error
+	UploadPhoto(caption string, pathToImage string, owner int) (int, error)
+	GetPhotoByID(photoID int) (Photo, error)
+	GetCommentsByPhotoID(photoID int) ([]Comment, error)
+	GetLikesByPhotoID(photoID int) ([]int, error)
 
 	Ping() error
 }
@@ -100,7 +104,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 		usersTable := `CREATE TABLE IF NOT EXISTS Users (
 			userID INTEGER PRIMARY KEY AUTOINCREMENT,
 			username VARCHAR(16) UNIQUE NOT NULL,
-			path_to_profile_image TEXT NOT NULL
+			path_to_profile_image TEXT UNIQUE NOT NULL
 		);`
 		_, errUsersTable := db.Exec(usersTable)
 		if errUsersTable != nil {
@@ -138,7 +142,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 			photoID INTEGER PRIMARY KEY AUTOINCREMENT,
 			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
 			caption VARCHAR(100),
-			path_to_image TEXT NOT NULL, 
+			path_to_image TEXT UNIQUE NOT NULL, 
 			owner INTEGER,
 			FOREIGN KEY(owner) REFERENCES Users(userID) ON DELETE CASCADE
 		);`

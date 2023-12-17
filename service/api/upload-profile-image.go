@@ -56,7 +56,7 @@ func (rt *_router) uploadProfileImage(w http.ResponseWriter, r *http.Request, ps
 	case "image/jpg":
 		ext = ".jpg"
 	default:
-		ctx.Logger.Error(errors.New("error in uploadProfileImage function: bad request"))
+		ctx.Logger.Error("error in uploadProfileImage function: bad request")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

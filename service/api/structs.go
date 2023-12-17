@@ -88,6 +88,14 @@ type Photo struct {
 	Caption       string    `json:"caption"`
 }
 
+func (p *Photo) FromDatabase(photo database.Photo) {
+	p.PhotoID = photo.PhotoID
+	p.Timestamp = photo.Timestamp
+	p.Owner = photo.UserID
+	p.ImagePath = photo.PathToImage
+	p.Caption = photo.Caption
+}
+
 // Comment schema
 type Comment struct {
 	CommentID int       `json:"comment-id"`
