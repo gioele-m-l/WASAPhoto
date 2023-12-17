@@ -2,8 +2,12 @@ package api
 
 import (
 	"errors"
+	"os"
+	"strconv"
+	"sync"
 	"time"
 
+	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
 )
 
@@ -89,4 +93,33 @@ type Comment struct {
 	CommentID int       `json:"comment-id"`
 	Timestamp time.Time `json:"timestamp"`
 	Text      string    `json:"text"`
+}
+
+// Array containing the images' filenames from the /images/ directory
+var Images []string
+var dirPath = "./images/"
+var dirMutex = &sync.Mutex{}
+
+func AddImage(data []byte, ext string, ctx reqcontext.RequestContext) (string, error) {
+	dirMutex.Lock()
+	defer dirMutex.Unlock()
+
+	newImageID := len(Images) + 1
+	var filename = dirPath + "image" + strconv.Itoa(newImageID) + ext
+
+	Images = append(Images, filename)
+
+	file, err := os.Create(filename)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("error creating the image file")
+		return "", err
+	}
+	defer file.Close()
+	_, err = file.Write(data)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("error writing the image file")
+		return "", err
+	}
+
+	return filename, nil
 }

@@ -180,3 +180,9 @@ func (db *appdbimpl) CheckBan(blockerID int, blockedID int) (bool, error) {
 	}
 	return true, nil
 }
+
+// Update user's profile image path
+func (db *appdbimpl) UpdateProfileImage(uID int, path string) error {
+	_, err := db.c.Exec(`UPDATE Users SET path_to_profile_image = ? WHERE userID = ?`, path, uID)
+	return err
+}

@@ -28,17 +28,18 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"math/rand"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/globaltime"
 	"github.com/ardanlabs/conf"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/sirupsen/logrus"
-	"math/rand"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 // main is the program entry point. The only purpose of this function is to call run() and set the exit code if there is
@@ -95,6 +96,23 @@ func run() error {
 	if err != nil {
 		logger.WithError(err).Error("error creating AppDatabase")
 		return fmt.Errorf("creating AppDatabase: %w", err)
+	}
+
+	// Create the directory for the images files
+	dirPath := "./images/"
+	err = os.Mkdir(dirPath, 0754)
+	if err != nil {
+		logger.WithError(err).Error("error creating '/images/' directory")
+		return fmt.Errorf("creating '/images/' directory: %w", err)
+	} else {
+		files, err := os.ReadDir(dirPath)
+		if err != nil {
+			logger.WithError(err).Error("error getting image files")
+			return fmt.Errorf("returning '/images/' image files: %w", err)
+		}
+		for _, file := range files {
+			api.Images = append(api.Images, file.Name())
+		}
 	}
 
 	// Start (main) API server

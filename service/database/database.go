@@ -62,6 +62,8 @@ type AppDatabase interface {
 	BanUser(blockerID int, blockedID int) error
 	UnbanUser(blockerID int, blockedID int) error
 
+	UpdateProfileImage(uID int, path string) error
+
 	Ping() error
 }
 
