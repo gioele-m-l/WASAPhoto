@@ -60,3 +60,38 @@ func (db *appdbimpl) GetLikesByPhotoID(photoID int) ([]int, error) {
 	}
 	return likes, nil
 }
+
+// Get user stream using userID
+func (db *appdbimpl) GetUserStream(userID int, page int) ([]Photo, error) {
+	var photos []Photo
+	query := `SELECT Photos.* FROM Photos JOIN Followers ON Photos.owner = Followers.followedID
+				WHERE Followers.followerID = ? ORDER BY Photos.timestamp DESC LIMIT ? OFFSET ?`
+
+	limit := 20
+	offset := 20 * page
+
+	rows, err := db.c.Query(query, userID, limit, offset)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return photos, nil
+		}
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var photo Photo
+		err := rows.Scan(&photo.PhotoID, &photo.Timestamp, &photo.Caption, &photo.PathToImage, &photo.UserID)
+		if err != nil {
+			return nil, err
+		}
+		photos = append(photos, photo)
+	}
+
+	err = rows.Err() // Check if there was an error during the iteration
+	if err != nil {
+		return nil, err
+	}
+
+	return photos, nil
+}

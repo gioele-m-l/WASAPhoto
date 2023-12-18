@@ -109,6 +109,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	// Returning the json with the photo object
 	w.Header().Set("Content-ype", "application/json")
+	w.WriteHeader(http.StatusCreated)
 
 	err = json.NewEncoder(w).Encode(photo)
 	if err != nil {

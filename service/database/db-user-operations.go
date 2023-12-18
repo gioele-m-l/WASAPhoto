@@ -60,15 +60,16 @@ func (db *appdbimpl) GetUserIDByAuthToken(token string) (UserToken, error) {
 }
 
 // Get a list of users (max 100)
-func (db *appdbimpl) ListUsers(substring string) ([]User, error) {
+func (db *appdbimpl) ListUsers(userID int, substring string) ([]User, error) {
 	var users []User
-	stmt, err := db.c.Prepare("SELECT * FROM Users WHERE username LIKE ? LIMIT 100")
+	stmt, err := db.c.Prepare(`SELECT Users.* FROM Users LEFT JOIN Blocked_users ON Blocked_users.blockerID = Users.userID AND
+								Blocked_users.blockedID = ? WHERE Users.username LIKE ? AND Blocked_users.blockerID IS NULL LIMIT 100`)
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
 
-	rows, err := stmt.Query(substring + "%")
+	rows, err := stmt.Query(userID, substring+"%")
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +89,7 @@ func (db *appdbimpl) ListUsers(substring string) ([]User, error) {
 		return users, err
 	}
 
-	return users, err
+	return users, nil
 }
 
 // Get the number of followers of the specified user
@@ -151,7 +152,8 @@ func (db *appdbimpl) UnfollowUser(followerID int, followedID int) error {
 
 // Insert a new relationship Blocked_users in db
 func (db *appdbimpl) BanUser(blockerID int, blockedID int) error {
-	_, err := db.c.Exec(`INSERT INTO Blocked_users (blockerID, blockedID) VALUES (?, ?)`, blockerID, blockedID)
+	_, err := db.c.Exec(`INSERT INTO Blocked_users (blockerID, blockedID) VALUES (?, ?);
+						DELETE FROM Followers WHERE followerID = ? AND followedID = ?`, blockerID, blockedID, blockedID, blockerID)
 	if err != nil {
 		return err
 	}
@@ -177,6 +179,9 @@ func (db *appdbimpl) CheckBan(blockerID int, blockedID int) (bool, error) {
 		} else {
 			return false, err
 		}
+	}
+	if count == 0 {
+		return false, nil
 	}
 	return true, nil
 }

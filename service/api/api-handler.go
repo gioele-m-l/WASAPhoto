@@ -25,6 +25,7 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.DELETE("/users/:username/banned/:user-id", rt.wrap(rt.unbanUser))
 
 	rt.router.POST("/photos/", rt.wrap(rt.uploadPhoto))
+	rt.router.GET("/photos/", rt.wrap(rt.getMyStream))
 
 	// Special routes
 	rt.router.GET("/liveness", rt.liveness)

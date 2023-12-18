@@ -49,7 +49,7 @@ type AppDatabase interface {
 	GetUserToken(userID int) (UserToken, error)
 	SetMyUserName(userID int, username string) error
 	GetUserIDByAuthToken(token string) (UserToken, error)
-	ListUsers(substring string) ([]User, error)
+	ListUsers(userID int, substring string) ([]User, error)
 
 	GetUserFollowersCountByID(userID int) (int, error)
 	GetUserFollowingsCountByID(userID int) (int, error)
@@ -67,6 +67,8 @@ type AppDatabase interface {
 	GetPhotoByID(photoID int) (Photo, error)
 	GetCommentsByPhotoID(photoID int) ([]Comment, error)
 	GetLikesByPhotoID(photoID int) ([]int, error)
+
+	GetUserStream(userID int, page int) ([]Photo, error)
 
 	Ping() error
 }

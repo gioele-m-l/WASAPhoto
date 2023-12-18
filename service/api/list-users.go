@@ -12,7 +12,7 @@ import (
 func (rt *_router) listUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	w.Header().Set("Content-Type", "application/json")
 
-	substring := ""
+	var substring string
 	if r.URL.Query().Has("search") {
 		substring = r.URL.Query().Get("search")
 	}
@@ -24,7 +24,7 @@ func (rt *_router) listUsers(w http.ResponseWriter, r *http.Request, ps httprout
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	_, err := rt.db.GetUserIDByAuthToken(authToken)
+	uTok, err := rt.db.GetUserIDByAuthToken(authToken)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("invalid user token")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -33,7 +33,7 @@ func (rt *_router) listUsers(w http.ResponseWriter, r *http.Request, ps httprout
 
 	// Get a list of user summaries from the db (limited to 100 results)
 	var users []UserSummary
-	usersDB, err := rt.db.ListUsers(substring)
+	usersDB, err := rt.db.ListUsers(uTok.UserID, substring)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("error in returning the users")
 		w.WriteHeader(http.StatusInternalServerError)
