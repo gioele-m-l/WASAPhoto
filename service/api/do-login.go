@@ -12,7 +12,7 @@ import (
 )
 
 func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	w.Header().Set("Content-ype", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 
 	if r.Header.Get("Content-Type") != "application/json" {
 		ctx.Logger.Error("Content-Type header is not application/json")
@@ -48,6 +48,7 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 	// Try to create the user in the db, if already exists return the token
 	err = rt.db.CreateUser(user.ToDatabase())
 	if err != nil {
+		ctx.Logger.Warn(err)
 		// The user is already in the database
 		userDB, err := rt.db.GetUserByUsername(user.Username)
 		if err != nil {
