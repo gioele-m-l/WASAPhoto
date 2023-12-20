@@ -99,16 +99,16 @@ func run() error {
 	}
 
 	// Create the directory for the images files
-	dirPath := "./images/"
+	var dirPath = "/tmp/images/"
 	err = os.MkdirAll(dirPath, 0754)
 	if err != nil {
-		logger.WithError(err).Error("error creating '/images/' directory")
-		return fmt.Errorf("creating '/images/' directory: %w", err)
+		logger.WithError(err).Error("error creating '/tmp/images/' directory")
+		return fmt.Errorf("creating '/tmp/images/' directory: %w", err)
 	} else {
 		files, err := os.ReadDir(dirPath)
 		if err != nil {
 			logger.WithError(err).Error("error getting image files")
-			return fmt.Errorf("returning '/images/' image files: %w", err)
+			return fmt.Errorf("returning '/tmp/images/' image files: %w", err)
 		}
 		for _, file := range files {
 			api.Images = append(api.Images, file.Name())

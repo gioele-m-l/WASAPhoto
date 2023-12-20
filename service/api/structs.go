@@ -105,7 +105,7 @@ type Comment struct {
 
 // Array containing the images' filenames from the /images/ directory
 var Images []string
-var dirPath = "./images/"
+var dirPath = "/tmp/images/"
 var dirMutex = &sync.Mutex{}
 
 func AddImage(data []byte, ext string, ctx reqcontext.RequestContext) (string, error) {
