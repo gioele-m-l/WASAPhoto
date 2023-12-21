@@ -43,7 +43,7 @@ components:
         String with the path to the image.
       type: string
       format: uri
-      pattern: 'image[-]?[0-9]+\.(jpg|png)'
+      pattern: "image[-]?[0-9]+\\.(jpg|png)"
       minLength: 1
       maxLength: 50
     
@@ -75,7 +75,7 @@ components:
         can change its username.
       type: string
       example: Mario
-      pattern: '^.*?$'
+      pattern: "^.*?$"
       minLength: 3
       maxLength: 16
 
