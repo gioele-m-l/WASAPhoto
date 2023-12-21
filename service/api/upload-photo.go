@@ -66,7 +66,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	// Storing image
-	path, err := AddImage(image, ext, ctx)
+	path, err := AddImage(image, ext)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("error storing the image")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -76,8 +76,12 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	// Creating photo object
 	photoID, err := rt.db.UploadPhoto(caption, path, userTok.UserID)
 	if err != nil {
-		os.Remove(path)
 		ctx.Logger.WithError(err).Error("error inserting the photo in the db")
+		err = os.Remove(path)
+		if err != nil {
+			ctx.Logger.WithError(err).Error("error removing the image")
+		}
+
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

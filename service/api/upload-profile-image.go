@@ -69,7 +69,7 @@ func (rt *_router) uploadProfileImage(w http.ResponseWriter, r *http.Request, ps
 		return
 	}
 
-	path, err := AddImage(data, ext, ctx)
+	path, err := AddImage(data, ext)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("error in uploadProfileImage function: AddImage")
 		w.WriteHeader(http.StatusInternalServerError)

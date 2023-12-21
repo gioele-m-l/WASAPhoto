@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
 )
 
@@ -105,10 +104,12 @@ type Comment struct {
 
 // Array containing the images' filenames from the /images/ directory
 var Images []string
-var dirPath = "/tmp/images/"
+
+const dirPath = "/tmp/images/"
+
 var dirMutex = &sync.Mutex{}
 
-func AddImage(data []byte, ext string, ctx reqcontext.RequestContext) (string, error) {
+func AddImage(data []byte, ext string) (string, error) {
 	dirMutex.Lock()
 	defer dirMutex.Unlock()
 
@@ -119,13 +120,11 @@ func AddImage(data []byte, ext string, ctx reqcontext.RequestContext) (string, e
 
 	file, err := os.Create(filename)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("error creating the image file")
 		return "", err
 	}
 	defer file.Close()
 	_, err = file.Write(data)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("error writing the image file")
 		return "", err
 	}
 
