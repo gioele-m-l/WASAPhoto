@@ -1,6 +1,9 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+	"errors"
+)
 
 func (db *appdbimpl) UploadPhoto(caption string, pathToImage string, owner int) (int, error) {
 	result, err := db.c.Exec(`INSERT INTO Photos (caption, path_to_image, owner) VALUES (?, ?, ?)`, caption, pathToImage, owner)
@@ -84,7 +87,7 @@ func (db *appdbimpl) GetUserStream(userID int, page int) ([]Photo, error) {
 
 	rows, err := db.c.Query(query, userID, limit, offset)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return photos, nil
 		}
 		return nil, err

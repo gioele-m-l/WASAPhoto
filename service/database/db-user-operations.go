@@ -22,7 +22,7 @@ func (db *appdbimpl) GetUserByUsername(username string) (User, error) {
 	var user User
 	err := db.c.QueryRow(`SELECT * FROM Users WHERE username = ?`, username).Scan(&user.UserID, &user.Username, &user.PathToProfileImage)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return user, errors.New("User does not exists")
 		}
 	}
@@ -34,8 +34,8 @@ func (db *appdbimpl) GetUserToken(userID int) (UserToken, error) {
 	var userTok UserToken
 	err := db.c.QueryRow(`SELECT * FROM AuthTokens WHERE userID = ?`, userID).Scan(&userTok.UserID, &userTok.Token)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return userTok, errors.New("user's token does not exists")
+		if errors.Is(err, sql.ErrNoRows) {
+			return userTok, err
 		}
 	}
 	return userTok, nil
@@ -52,8 +52,8 @@ func (db *appdbimpl) GetUserIDByAuthToken(token string) (UserToken, error) {
 	var userTok UserToken
 	err := db.c.QueryRow(`SELECT * FROM AuthTokens WHERE token = ?`, token).Scan(&userTok.UserID, &userTok.Token)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return userTok, errors.New("user's token doesn't exists")
+		if errors.Is(err, sql.ErrNoRows) {
+			return userTok, err
 		}
 	}
 	return userTok, err
@@ -174,7 +174,7 @@ func (db *appdbimpl) CheckBan(blockerID int, blockedID int) (bool, error) {
 	var count int
 	err := db.c.QueryRow(`SELECT COUNT(*) FROM Blocked_users WHERE blockerID = ? AND blockedID = ?`, blockerID, blockedID).Scan(&count)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return false, nil
 		} else {
 			return false, err
