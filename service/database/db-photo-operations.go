@@ -36,6 +36,12 @@ func (db *appdbimpl) GetCommentsByPhotoID(photoID int) ([]Comment, error) {
 		}
 		comments = append(comments, comment)
 	}
+
+	err = rows.Err() // Check if there was an error during the iteration
+	if err != nil {
+		return nil, err
+	}
+
 	return comments, nil
 }
 
@@ -58,6 +64,12 @@ func (db *appdbimpl) GetLikesByPhotoID(photoID int) ([]int, error) {
 		}
 		likes = append(likes, userID)
 	}
+
+	err = rows.Err() // Check if there was an error during the iteration
+	if err != nil {
+		return nil, err
+	}
+
 	return likes, nil
 }
 
