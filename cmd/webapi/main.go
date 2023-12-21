@@ -99,7 +99,7 @@ func run() error {
 	}
 
 	// Create the directory for the images files
-	var dirPath = "/tmp/images/"
+	const dirPath = "/tmp/images/"
 	err = os.MkdirAll(dirPath, 0744)
 	if err != nil {
 		logger.WithError(err).Error("error creating '/tmp/images/' directory")
