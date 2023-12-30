@@ -54,6 +54,7 @@ type AppDatabase interface {
 	GetUserFollowersCountByID(userID int) (int, error)
 	GetUserFollowingsCountByID(userID int) (int, error)
 	GetUserPhotosCountByID(userID int) (int, error)
+	GetUserPhotos(userID int, page int) ([]Photo, error)
 
 	FollowUser(followerID int, followedID int) error
 	UnfollowUser(followerID int, followedID int) error

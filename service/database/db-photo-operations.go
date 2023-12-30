@@ -24,7 +24,7 @@ func (db *appdbimpl) GetPhotoByID(photoID int) (Photo, error) {
 func (db *appdbimpl) GetCommentsByPhotoID(photoID int) ([]Comment, error) {
 	rows, err := db.c.Query(`SELECT * FROM Comments WHERE photoID = ?`, photoID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
 		return nil, err
@@ -52,7 +52,7 @@ func (db *appdbimpl) GetCommentsByPhotoID(photoID int) ([]Comment, error) {
 func (db *appdbimpl) GetLikesByPhotoID(photoID int) ([]int, error) {
 	rows, err := db.c.Query(`SELECT likerID FROM Likes WHERE photoID = ?`, photoID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
 		return nil, err
@@ -81,6 +81,40 @@ func (db *appdbimpl) GetUserStream(userID int, page int) ([]Photo, error) {
 	var photos []Photo
 	query := `SELECT Photos.* FROM Photos JOIN Followers ON Photos.owner = Followers.followedID
 				WHERE Followers.followerID = ? ORDER BY Photos.timestamp DESC LIMIT ? OFFSET ?`
+
+	limit := 20
+	offset := 20 * page
+
+	rows, err := db.c.Query(query, userID, limit, offset)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return photos, nil
+		}
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var photo Photo
+		err := rows.Scan(&photo.PhotoID, &photo.Timestamp, &photo.Caption, &photo.PathToImage, &photo.UserID)
+		if err != nil {
+			return nil, err
+		}
+		photos = append(photos, photo)
+	}
+
+	err = rows.Err() // Check if there was an error during the iteration
+	if err != nil {
+		return nil, err
+	}
+
+	return photos, nil
+}
+
+// Get user photos using userID
+func (db *appdbimpl) GetUserPhotos(userID int, page int) ([]Photo, error) {
+	var photos []Photo
+	query := `SELECT * FROM Photos WHERE Photos.owner = ? ORDER BY Photos.timestamp DESC LIMIT ? OFFSET ?`
 
 	limit := 20
 	offset := 20 * page
