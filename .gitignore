@@ -1,7 +1,6 @@
 /bin/
 /pkg/
 /src/
-/images/
 .idea/
 *.iml
 *.exe
