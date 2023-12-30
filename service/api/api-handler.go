@@ -28,6 +28,7 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.POST("/photos/", rt.wrap(rt.uploadPhoto))
 	rt.router.GET("/photos/", rt.wrap(rt.getMyStream))
 	rt.router.DELETE("/photos/:photo-id/", rt.wrap(rt.deletePhoto))
+	rt.router.GET("/images/:image-id", rt.wrap(rt.getImageFile))
 
 	// Special routes
 	rt.router.GET("/liveness", rt.liveness)
