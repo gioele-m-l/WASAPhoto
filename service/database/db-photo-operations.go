@@ -14,6 +14,11 @@ func (db *appdbimpl) UploadPhoto(caption string, pathToImage string, owner int) 
 	return int(id), err
 }
 
+func (db *appdbimpl) DeletePhoto(photoID int) error {
+	_, err := db.c.Exec(`DELETE * FROM Photos WHERE photoID = ?`, photoID)
+	return err
+}
+
 func (db *appdbimpl) GetPhotoByID(photoID int) (Photo, error) {
 	var photo Photo
 	err := db.c.QueryRow(`SELECT * FROM Photos WHERE photoID = ?`, photoID).Scan(&photo.PhotoID, &photo.Timestamp, &photo.Caption, &photo.PathToImage, &photo.UserID)

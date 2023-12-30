@@ -65,6 +65,7 @@ type AppDatabase interface {
 
 	UpdateProfileImage(uID int, path string) error
 	UploadPhoto(caption string, pathToImage string, owner int) (int, error)
+	DeletePhoto(photoID int) error
 	GetPhotoByID(photoID int) (Photo, error)
 	GetCommentsByPhotoID(photoID int) ([]Comment, error)
 	GetLikesByPhotoID(photoID int) ([]int, error)
