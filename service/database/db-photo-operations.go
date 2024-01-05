@@ -149,3 +149,19 @@ func (db *appdbimpl) GetUserPhotos(userID int, page int) ([]Photo, error) {
 
 	return photos, nil
 }
+
+// Like photo
+func (db *appdbimpl) LikePhoto(photoID int, userID int) (int64, error) {
+	result, err := db.c.Exec(`INSERT INTO Likes (photoID, likerID) SELECT ?, ? WHERE NOT EXISTS(
+								SELECT 1 FROM Blocked_users INNER JOIN Photos ON Blocked_users.blockerID = Photos.owner
+								WHERE Blocked_users.blockedID = ? AND Photos.photoID = ?
+								) AND NOT EXISTS(
+									SELECT 1 FROM Blocked_users INNER JOIN Photos ON Blocked_users.blockedID = Photos.owner
+									WHERE Blocked_users.blockerID = ? AND Photos.photoID = ?
+								)`, photoID, userID, userID, photoID, userID, photoID)
+	if err != nil {
+		return -1, err
+	}
+
+	return result.RowsAffected()
+}
