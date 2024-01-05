@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
+	"WASAPhoto/service/database"
 )
 
 // Username schema

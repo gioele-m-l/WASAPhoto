@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
-	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
+	"WASAPhoto/service/api/reqcontext"
+	"WASAPhoto/service/database"
+
 	"github.com/julienschmidt/httprouter"
 )
 
