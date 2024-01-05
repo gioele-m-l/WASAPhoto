@@ -4,6 +4,7 @@ import (
 	"WASAPhoto/service/api/reqcontext"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -33,16 +34,18 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	// Get the specified photoID and check if it's valid
 	photoID, err := strconv.Atoi(ps.ByName("photo-id"))
 	if err != nil {
-		if err != nil {
-			ctx.Logger.WithError(err).Error("likePhoto function: cannot convert string to int: photo-id")
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
+		ctx.Logger.WithError(err).Error("likePhoto function: cannot convert string to int: photo-id")
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	// If the user isn't banned by the owner of the photo add a like to the photo
 	rowsAffected, err := rt.db.LikePhoto(photoID, userID)
 	if err != nil {
+		if strings.Contains(err.Error(), "UNIQUE constraint failed") {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
 		ctx.Logger.WithError(err).Error("likePhoto function: db query error")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
