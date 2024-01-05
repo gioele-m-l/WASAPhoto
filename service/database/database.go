@@ -119,8 +119,8 @@ func New(db *sql.DB) (AppDatabase, error) {
 
 		// Creating the Followers table
 		followersTable := `CREATE TABLE IF NOT EXISTS Followers (
-			followedID INTEGER,
-			followerID INTEGER,
+			followedID INTEGER NOT NULL,
+			followerID INTEGER NOT NULL,
 			PRIMARY KEY(followedID, followerID),
 			FOREIGN KEY(followedID) REFERENCES Users(userID) ON DELETE CASCADE,
 			FOREIGN KEY(followerID) REFERENCES Users(userID) ON DELETE CASCADE
@@ -132,8 +132,8 @@ func New(db *sql.DB) (AppDatabase, error) {
 
 		// Creating the Blocked_users table
 		blockedUsersTable := `CREATE TABLE IF NOT EXISTS Blocked_users (
-			blockerID INTEGER,
-			blockedID INTEGER,
+			blockerID INTEGER NOT NULL,
+			blockedID INTEGER NOT NULL,
 			PRIMARY KEY(blockerID, blockedID),
 			FOREIGN KEY(blockerID) REFERENCES Users(userID) ON DELETE CASCADE,
 			FOREIGN KEY(blockedID) REFERENCES Users(userID) ON DELETE CASCADE
@@ -149,7 +149,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
 			caption VARCHAR(100),
 			path_to_image TEXT UNIQUE NOT NULL, 
-			owner INTEGER,
+			owner INTEGER NOT NULL,
 			FOREIGN KEY(owner) REFERENCES Users(userID) ON DELETE CASCADE
 		);`
 		_, errPhotosTable := db.Exec(photosTable)
@@ -159,8 +159,8 @@ func New(db *sql.DB) (AppDatabase, error) {
 
 		// Creating the Likes table
 		likesTable := `CREATE TABLE IF NOT EXISTS Likes (
-			photoID INTEGER,
-			likerID INTEGER,
+			photoID INTEGER NOT NULL,
+			likerID INTEGER NOT NULL,
 			PRIMARY KEY(photoID, likerID),
 			FOREIGN KEY(photoID) REFERENCES Photos(photoID) ON DELETE CASCADE,
 			FOREIGN KEY(likerID) REFERENCES Users(userID) ON DELETE CASCADE
@@ -175,8 +175,8 @@ func New(db *sql.DB) (AppDatabase, error) {
 			commentID INTEGER PRIMARY KEY AUTOINCREMENT,
 			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
 			text VARCHAR(256),
-			commenterID INTEGER,
-			photoID INTEGER,
+			commenterID INTEGER NOT NULL,
+			photoID INTEGER NOT NULL,
 			FOREIGN KEY(commenterID) REFERENCES Users(userID) ON DELETE CASCADE,
 			FOREIGN KEY(photoID) REFERENCES Photos(photoID) ON DELETE CASCADE
 		);`
@@ -187,7 +187,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 
 		// Creating the AuthTokens table
 		authTokensTable := `CREATE TABLE IF NOT EXISTS AuthTokens (
-			userID INTEGER PRIMARY KEY,
+			userID INTEGER PRIMARY KEY NOT NULL,
 			token VARCHAR(32) NOT NULL,
 			FOREIGN KEY(userID) REFERENCES Users(userID) ON DELETE CASCADE
 		);`
