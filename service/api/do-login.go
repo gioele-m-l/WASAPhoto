@@ -48,7 +48,6 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 	// Try to create the user in the db, if already exists return the token
 	err = rt.db.CreateUser(user.ToDatabase())
 	if err != nil {
-		ctx.Logger.Warn(err)
 		// The user is already in the database
 		userDB, err := rt.db.GetUserByUsername(user.Username)
 		if err != nil {
