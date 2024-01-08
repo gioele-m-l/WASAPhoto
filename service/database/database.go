@@ -75,6 +75,9 @@ type AppDatabase interface {
 	LikePhoto(photoID int, userID int) (int64, error)
 	UnlikePhoto(photoID int, userID int) (int64, error)
 
+	CommentPhoto(photoID int, userID int, commentText string) (sql.Result, error)
+	GetCommentByID(commentID int64) (Comment, error)
+
 	Ping() error
 }
 

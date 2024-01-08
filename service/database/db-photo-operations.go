@@ -176,3 +176,31 @@ func (db *appdbimpl) UnlikePhoto(photoID int, userID int) (int64, error) {
 	}
 	return result.RowsAffected()
 }
+
+// Comment photo
+func (db *appdbimpl) CommentPhoto(photoID int, userID int, commentText string) (sql.Result, error) {
+	result, err := db.c.Exec(`INSERT INTO Comment (text, commenterID, photoID) SELECT ?, ?, ? WHERE EXISTS (
+									SELECT 1 FROM Photos WHERE photoID = ?
+								) AND NOT EXISTS (
+									SELECT 1 FROM Blocked_users INNER JOIN Photos ON Blocked_users.blockerID = Photos.owner
+									WHERE Blocked_users.blockedID = ? AND Photos.photoID = ?
+								) AND NOT EXISTS(
+									SELECT 1 FROM Blocked_users INNER JOIN Photos ON Blocked_users.blockedID = Photos.owner
+									WHERE Blocked_users.blockerID = ? AND Photos.photoID = ?
+								)`, commentText, userID, photoID, photoID, userID, photoID, userID, photoID)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+// Get comment by ID
+func (db *appdbimpl) GetCommentByID(commentID int64) (Comment, error) {
+	var comment Comment
+	err := db.c.QueryRow(`SELECT * FROM Comments WHERE commentID = ?`, commentID).Scan(comment.CommentID, comment.Timestamp, comment.Text, comment.UserID, comment.PhotoID)
+	if err != nil {
+		return comment, err
+	}
+	return comment, nil
+}
