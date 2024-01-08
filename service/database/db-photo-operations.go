@@ -15,7 +15,7 @@ func (db *appdbimpl) UploadPhoto(caption string, pathToImage string, owner int) 
 }
 
 func (db *appdbimpl) DeletePhoto(photoID int) error {
-	_, err := db.c.Exec(`DELETE * FROM Photos WHERE photoID = ?`, photoID)
+	_, err := db.c.Exec(`DELETE FROM Photos WHERE photoID = ?`, photoID)
 	return err
 }
 
@@ -170,7 +170,7 @@ func (db *appdbimpl) LikePhoto(photoID int, userID int) (int64, error) {
 
 // Unlike photo
 func (db *appdbimpl) UnlikePhoto(photoID int, userID int) (int64, error) {
-	result, err := db.c.Exec(`DELETE * FROM Likes WHERE photoID = ? AND likerID = ?`, photoID, userID)
+	result, err := db.c.Exec(`DELETE FROM Likes WHERE photoID = ? AND likerID = ?`, photoID, userID)
 	if err != nil {
 		return -1, err
 	}
@@ -179,7 +179,7 @@ func (db *appdbimpl) UnlikePhoto(photoID int, userID int) (int64, error) {
 
 // Comment photo
 func (db *appdbimpl) CommentPhoto(photoID int, userID int, commentText string) (sql.Result, error) {
-	result, err := db.c.Exec(`INSERT INTO Comment (text, commenterID, photoID) SELECT ?, ?, ? WHERE EXISTS (
+	result, err := db.c.Exec(`INSERT INTO Comments (text, commenterID, photoID) SELECT ?, ?, ? WHERE EXISTS (
 									SELECT 1 FROM Photos WHERE photoID = ?
 								) AND NOT EXISTS (
 									SELECT 1 FROM Blocked_users INNER JOIN Photos ON Blocked_users.blockerID = Photos.owner
@@ -198,7 +198,7 @@ func (db *appdbimpl) CommentPhoto(photoID int, userID int, commentText string) (
 // Get comment by ID
 func (db *appdbimpl) GetCommentByID(commentID int64) (Comment, error) {
 	var comment Comment
-	err := db.c.QueryRow(`SELECT * FROM Comments WHERE commentID = ?`, commentID).Scan(comment.CommentID, comment.Timestamp, comment.Text, comment.UserID, comment.PhotoID)
+	err := db.c.QueryRow(`SELECT * FROM Comments WHERE commentID = ?`, commentID).Scan(&comment.CommentID, &comment.Timestamp, &comment.Text, &comment.UserID, &comment.PhotoID)
 	if err != nil {
 		return comment, err
 	}

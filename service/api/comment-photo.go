@@ -27,8 +27,9 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 
 	// Get the content of the body
 	var comment Comment
-	err = json.NewDecoder(r.Body).Decode(&comment.Text)
+	err = json.NewDecoder(r.Body).Decode(&comment)
 	if err != nil {
+		ctx.Logger.WithError(err).Error("commentPhoto: error in parsing the request body")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
