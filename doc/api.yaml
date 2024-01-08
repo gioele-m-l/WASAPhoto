@@ -414,6 +414,17 @@ paths:
         in: path
         required: true
         schema: { $ref: "#/components/schemas/Username" }
+      - name: page
+        in: query
+        description: |
+          This parameter is used to load a specified array of photo objects,
+          incrementing this number the server returns you new array of photos.
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 1
 
     get:
       tags: ["User Operations", "Photo Operations"]
@@ -436,7 +447,7 @@ paths:
                 type: array
                 items: { $ref: "#/components/schemas/Photo" }
                 minItems: 0
-                maxItems: 15
+                maxItems: 20
         
         "400":
           description: Bad request
