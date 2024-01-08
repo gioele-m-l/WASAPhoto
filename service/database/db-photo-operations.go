@@ -167,3 +167,12 @@ func (db *appdbimpl) LikePhoto(photoID int, userID int) (int64, error) {
 
 	return result.RowsAffected()
 }
+
+// Unlike photo
+func (db *appdbimpl) UnlikePhoto(photoID int, userID int) (int64, error) {
+	result, err := db.c.Exec(`DELETE * FROM Likes WHERE photoID = ? AND likerID = ?`, photoID, userID)
+	if err != nil {
+		return -1, err
+	}
+	return result.RowsAffected()
+}

@@ -73,6 +73,7 @@ type AppDatabase interface {
 	GetUserStream(userID int, page int) ([]Photo, error)
 
 	LikePhoto(photoID int, userID int) (int64, error)
+	UnlikePhoto(photoID int, userID int) (int64, error)
 
 	Ping() error
 }
