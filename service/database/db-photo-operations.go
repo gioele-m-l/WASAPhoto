@@ -219,7 +219,7 @@ func (db *appdbimpl) UncommentPhoto(photoID int, commentID int, userID int) erro
 						WHEN NOT EXISTS(
 							SELECT 1 FROM Photos WHERE photoID = ?
 						) THEN 1 
-						WHEN NOT tEXISTS(
+						WHEN NOT EXISTS(
 							SELECT 1 FROM Comments WHERE commentID = ? AND photoID = ?
 						) THEN 2
 						ELSE 0 END`, photoID, commentID, photoID)
