@@ -77,6 +77,7 @@ type AppDatabase interface {
 
 	CommentPhoto(photoID int, userID int, commentText string) (sql.Result, error)
 	GetCommentByID(commentID int64) (Comment, error)
+	UncommentPhoto(photoId int, commentId int, userID int) error
 
 	Ping() error
 }

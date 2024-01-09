@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 )
 
 func (db *appdbimpl) UploadPhoto(caption string, pathToImage string, owner int) (int, error) {
@@ -203,4 +204,91 @@ func (db *appdbimpl) GetCommentByID(commentID int64) (Comment, error) {
 		return comment, err
 	}
 	return comment, nil
+}
+
+// Uncomment photo
+func (db *appdbimpl) UncommentPhoto(photoID int, commentID int, userID int) error {
+	// Begin the transaction
+	tx, err := db.c.Begin()
+	if err != nil {
+		return err
+	}
+
+	// Check if the photo and the comment exist, then check if the comment belongs to the photo
+	row := tx.QueryRow(`SELECT CASE 
+						WHEN NOT EXISTS(
+							SELECT 1 FROM Photos WHERE photoID = ?
+						) THEN 1 
+						WHEN NOT tEXISTS(
+							SELECT 1 FROM Comments WHERE commentID = ? AND photoID = ?
+						) THEN 2
+						ELSE 0 END`, photoID, commentID, photoID)
+	var code int
+	err = row.Scan(&code)
+	if err != nil {
+		err2 := tx.Rollback()
+		if err2 != nil {
+			return err2
+		}
+		return err
+	}
+
+	switch code {
+	case 1:
+		err := tx.Rollback()
+		if err != nil {
+			return err
+		}
+		return fmt.Errorf("Photo does not exists")
+	case 2:
+		err := tx.Rollback()
+		if err != nil {
+			return err
+		}
+		return fmt.Errorf("Comment does not exists under this photo")
+	case 0:
+		break
+	}
+
+	// Check if the photo or the comment belong to the user
+	var count int
+	err = tx.QueryRow(`SELECT COUNT(*) FROM Photos p LEFT JOIN Comments c ON p.photoID = c.photoID
+						WHERE p.photoID = ? AND c.commentID = ? AND (p.owner = ? OR c.commenterID = ?)
+						`, photoID, commentID, userID, userID).Scan(&count)
+	if err != nil {
+		err2 := tx.Rollback()
+		if err2 != nil {
+			return err2
+		}
+		return err
+	}
+
+	if count == 0 {
+		err := tx.Rollback()
+		if err != nil {
+			return err
+		}
+		return fmt.Errorf("User does not own the photo nor the comment")
+	}
+
+	// Delete the comment
+	_, err = tx.Exec(`DELETE FROM Comments WHERE commentID = ?`, commentID)
+	if err != nil {
+		err2 := tx.Rollback()
+		if err2 != nil {
+			return err2
+		}
+		return err
+	}
+
+	// Exec the transaction
+	err = tx.Commit()
+	if err != nil {
+		err2 := tx.Rollback()
+		if err2 != nil {
+			return err2
+		}
+		return err
+	}
+	return nil
 }
