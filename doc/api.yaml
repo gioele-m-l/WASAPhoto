@@ -199,7 +199,7 @@ components:
         Short text for the user to tell something.
       type: string
       minLength: 0
-      maxLength: 256
+      maxLength: 255
       readOnly: false
 
     Comment:
