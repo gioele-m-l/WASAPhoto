@@ -99,7 +99,15 @@ func (p *Photo) FromDatabase(photo database.Photo) {
 type Comment struct {
 	CommentID int       `json:"comment-id"`
 	Timestamp time.Time `json:"timestamp"`
+	Owner     int       `json:"owner"`
 	Text      string    `json:"text"`
+}
+
+func (c *Comment) FromDatabase(comment database.Comment) {
+	c.CommentID = comment.CommentID
+	c.Timestamp = comment.Timestamp
+	c.Owner = comment.UserID
+	c.Text = comment.Text
 }
 
 // Array containing the images' filenames from the /images/ directory
