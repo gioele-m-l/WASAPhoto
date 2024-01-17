@@ -586,9 +586,9 @@ paths:
         required: false
         schema:
           type: integer
-          minimum: 1
+          minimum: 0
           maximum: 100
-          default: 1
+          default: 0
       - name: numberOfPhotos
         in: query
         description: |
@@ -599,7 +599,7 @@ paths:
           type: integer
           minimum: 0
           maximum: 20
-          default: 12
+          default: 20
       
       tags: ["Photo Operations"]
       summary: Get the stream of photos
@@ -624,9 +624,9 @@ paths:
                   page:
                     description: The number of the page.
                     type: integer
-                    minimum: 1
+                    minimum: 0
                     maximum: 100
-                    default: 1
+                    default: 0
                   photos:
                     description: Array of photos.
                     type: array
@@ -833,18 +833,6 @@ paths:
     
     get:
       tags: ["Photo Operations"]
-      parameters:
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 1
-          description: |
-            This parameter allows to retrieve more comments.
-
       summary: List the comments of a photo
       description: |
         Given a correct photo-id, retrieves a list of comments ordered in chronological order.
@@ -860,20 +848,11 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  page:
-                    description: page number
-                    type: integer
-                    minimum: 1
-                    maximum: 100
-                    default: 1
-                  comments:
-                    type: array
-                    description: Array of comments
-                    items: { $ref: "#/components/schemas/Comment" }
-                    minItems: 0
-                    maxItems: 100
+                type: array
+                description: Array of comments
+                items: { $ref: "#/components/schemas/Comment" }
+                minItems: 0
+                maxItems: 10000
         
         "400":
           description: Bad request, wrong photo-id format or page number.
