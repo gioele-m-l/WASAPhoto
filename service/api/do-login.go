@@ -93,6 +93,7 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
+	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(userToken)
 	if err != nil {
 		ctx.Logger.Error(err)
