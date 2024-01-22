@@ -4,22 +4,36 @@ export default {
 		return {
 			errormsg: null,
 			loading: false,
-			some_data: null,
+			authToken: sessionStorage.getItem("auth-token"),
+			userID: sessionStorage.getItem("user-id"),
+			responseStream: null,
 		}
 	},
 	methods: {
 		async refresh() {
+			if (this.authToken == null) {
+				this.$router.push({ path: "/login" })
+			}
 			this.loading = true;
 			this.errormsg = null;
 			try {
-				let response = await this.$axios.get("/");
-				this.some_data = response.data;
+				let response = await this.$axios.get("/photos/", {
+						headers: {
+							Authorization: this.authToken,
+						}
+					});
+				this.responseStream = response.data;
 			} catch (e) {
 				this.errormsg = e.toString();
 			}
 			this.loading = false;
+			console.log(history)
 		},
 	},
+	async refresh (){
+
+	},
+
 	mounted() {
 		this.refresh()
 	}
@@ -49,6 +63,11 @@ export default {
 		</div>
 
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
+	</div>
+	<div v-if="responseStream != null">
+		<li v-if="responseStream.photos != null" v-for="p in responseStream.photos" :key="p.photoID">
+			{{ p['photo-id'] }}, {{ p.timestamp }}, {{ p.owner }}, {{ p['image-path'] }}, {{ p['likes-count'] }}, {{ p['comments-count'] }}, {{ p.caption }}
+		</li>
 	</div>
 </template>
 
