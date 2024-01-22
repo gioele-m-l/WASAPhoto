@@ -24,6 +24,7 @@ export default {
 					this.token = response.data["auth-token"];
 					sessionStorage.setItem("user-id", this.userID);
 					sessionStorage.setItem("auth-token", this.token);
+					sessionStorage.setItem("username", this.username);
 					this.$router.push({ path: "/" });
 				} catch (e) {
 					this.errormsg = e.toString();
@@ -35,6 +36,7 @@ export default {
 			this.loading = true;
 			this.errormsg = null;
 			this.loading = false;
+			
 		}
 	},
 	mounted() {
