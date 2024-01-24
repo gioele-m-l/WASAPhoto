@@ -39,7 +39,7 @@ func (db *appdbimpl) GetCommentsByPhotoID(photoID int) ([]Comment, error) {
 	var comments []Comment
 	for rows.Next() {
 		var comment Comment
-		err := rows.Scan(&comment.CommentID, &comment.PhotoID, &comment.UserID, &comment.Timestamp, &comment.Text)
+		err := rows.Scan(&comment.CommentID, &comment.Timestamp, &comment.Text, &comment.UserID, &comment.PhotoID)
 		if err != nil {
 			return nil, err
 		}

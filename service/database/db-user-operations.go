@@ -153,7 +153,7 @@ func (db *appdbimpl) UnfollowUser(followerID int, followedID int) error {
 // Insert a new relationship Blocked_users in db
 func (db *appdbimpl) BanUser(blockerID int, blockedID int) error {
 	_, err := db.c.Exec(`INSERT INTO Blocked_users (blockerID, blockedID) VALUES (?, ?);
-						DELETE FROM Followers WHERE followerID = ? AND followedID = ?`, blockerID, blockedID, blockedID, blockerID)
+						DELETE FROM Followers WHERE (followerID = ? AND followedID = ?) OR (followedID = ? AND followerID = ?)`, blockerID, blockedID, blockedID, blockerID, blockedID, blockerID)
 	if err != nil {
 		return err
 	}
