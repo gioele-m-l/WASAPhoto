@@ -10,32 +10,34 @@ export default {
 		}
 	},
 	methods: {
-		async refresh() {
-			if (this.authToken == null) {
-				this.$router.push({ path: "/login" })
-			}
+		async getMyStream() {
 			this.loading = true;
 			this.errormsg = null;
-			try {
+
+			if (this.authToken == null) {
+				this.$router.push({ path: "/login" });
+			} else {
+				try {
 				let response = await this.$axios.get("/photos/", {
 						headers: {
 							Authorization: this.authToken,
 						}
 					});
-				this.responseStream = response.data;
-			} catch (e) {
-				this.errormsg = e.toString();
+					this.responseStream = response.data;
+				} catch (e) {
+					this.errormsg = e.toString();
+				}
 			}
 			this.loading = false;
-			console.log(history)
 		},
-	},
-	async refresh (){
 
+		async postPhoto() {
+
+		},
 	},
 
 	mounted() {
-		this.refresh()
+		this.getMyStream();
 	}
 }
 </script>
@@ -55,8 +57,8 @@ export default {
 					</button>
 				</div>
 				<div class="btn-group me-2">
-					<button type="button" class="btn btn-sm btn-outline-primary" @click="newItem">
-						New
+					<button type="button" class="btn btn-sm btn-outline-primary" @click="postPhoto">
+						Post a photo
 					</button>
 				</div>
 			</div>
