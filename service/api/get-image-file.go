@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/base64"
 	"net/http"
 	"os"
 
@@ -11,6 +12,7 @@ import (
 
 func (rt *_router) getImageFile(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	// Check authorization header
+	ctx.Logger.Info("getImageFile: request received")
 	_, err := CheckAuthentication(rt, r)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("getImageFile function: missing or invalid user token")
@@ -20,16 +22,19 @@ func (rt *_router) getImageFile(w http.ResponseWriter, r *http.Request, ps httpr
 
 	// Get the file name from parameters
 	imageID := ps.ByName("image-id")
+	ctx.Logger.Info(imageID)
 	path := "/tmp/images/" + imageID
-	file, err := os.OpenFile(path, os.O_RDONLY, 0400)
+	data, err := os.ReadFile(path)
+	ctx.Logger.Info("Reading: " + path)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("getImageFile function")
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	file.Close()
 
 	// Send the file
 	w.Header().Set("Content-Type", "image/"+path[len(path)-3:])
-	http.ServeFile(w, r, path)
+	data = []byte(base64.StdEncoding.EncodeToString(data))
+	ctx.Logger.Info("Serving: " + path)
+	w.Write(data)
 }
