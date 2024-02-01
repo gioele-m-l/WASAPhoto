@@ -198,6 +198,8 @@ components:
       description: |
         Short text for the user to tell something.
       type: string
+      example: Mario
+      pattern: "^.*?$"
       minLength: 0
       maxLength: 255
       readOnly: false
@@ -662,6 +664,8 @@ paths:
                 caption:
                   description: Short text where the user can say something.
                   type: string
+                  example: Mario
+                  pattern: "^.*?$"
                   minLength: 0
                   maxLength: 100
                 
