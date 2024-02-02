@@ -64,10 +64,23 @@
                 }
                 this.loading = false;
             },
-    
-            deleteComment(index) {
-                this.photo.comments.splice(index, 1);
-            },
+            
+            async deletePhoto(){
+                this.loading = true;
+                this.errormsg = false;
+                try {
+                    let response = await this.$axios.delete("/photos/" + this.photo.photoID + "/", {
+                        headers : {
+                            Authorization: this.authToken
+                        }
+                    })
+                    console.log(response.status)
+                } catch (e) {
+                    this.errormsg = e.toString();
+                }
+
+                this.loading = false;
+            }
         },
 
         mounted() {
@@ -86,6 +99,7 @@
             <p>{{ photo.commentsCount }} comments</p>
             <button @click="likePhoto">Like</button>
             <button @click="unlikePhoto">Unlike</button>
+            <button @click="deletePhoto">&times;</button>
         </div>
     </div>
 </template>
