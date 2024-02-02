@@ -50,7 +50,7 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	// Delete the photo and the related image
-	err = os.Remove(photoDB.PathToImage)
+	err = os.Remove("/tmp/images/" + photoDB.PathToImage)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("error in deletePhoto function: cannot remove the image file")
 		w.WriteHeader(http.StatusInternalServerError)
