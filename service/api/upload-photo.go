@@ -113,7 +113,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	photo.LikesCount = len(likes)
 
 	// Returning the json with the photo object
-	w.Header().Set("Content-ype", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 
 	err = json.NewEncoder(w).Encode(photo)

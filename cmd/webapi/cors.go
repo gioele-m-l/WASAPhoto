@@ -16,6 +16,7 @@ func applyCORSHandler(h http.Handler) http.Handler {
 			"Authorization",
 			"Accept",
 			"Origin",
+			"Access-Control-Allow-Origin",
 		}),
 		handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS", "DELETE", "PUT"}),
 		// Do not modify the CORS origin and max age, they are used in the evaluation.

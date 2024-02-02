@@ -136,5 +136,5 @@ func AddImage(data []byte, ext string) (string, error) {
 		return "", err
 	}
 
-	return filename, nil
+	return "image" + strconv.Itoa(newImageID) + ext, nil
 }
