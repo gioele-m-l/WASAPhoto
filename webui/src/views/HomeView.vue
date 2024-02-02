@@ -51,7 +51,11 @@ export default {
 		},
 
 		uploadFile(){
-			this.postPhotoFile = this.$refs.file.files[0];
+			let ftype = this.$refs.file.files[0].name.split('.')[1]
+			if (ftype == "jpeg"){
+				ftype = "jpg"
+			}
+			this.postPhotoFile = new Blob([this.$refs.file.files[0]], { type: "image/"+ftype });
 		},
 
         async uploadPhoto() {
@@ -62,18 +66,15 @@ export default {
 				const formData = new FormData();
 				formData.append("caption", this.postPhotoCaption);
 				formData.append("image", this.postPhotoFile);
-				let response = await this.$axios.post("/photos/", formData, { 
-					headers : {
-						Authorization: this.authToken,
-						Content: 'multipart/form-data'
-					}
-				});
-
-				console.log(response.status)
+				const headers = { 'Content-Type': 'multipart/form-data', 
+									'Authorization': this.authToken,
+									'Access-Control-Allow-Origin': '*'}
+				let response = await this.$axios.post("/photos/", formData, { headers });
 			} catch (e) {
 				this.errormsg = e.toString();
 			}
-
+			this.postPhotoCaption = "";
+			this.postPhotoFile = null;
 			this.hidePostPhotoModal();
 			this.loading = false;
         },
