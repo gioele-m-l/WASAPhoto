@@ -62,11 +62,7 @@ export default {
 					this.photos.push(photo);
 				}
 			} catch (e) {
-				if(this.photos.length == 0){
-					
-				}else {
-					this.errormsg = e.toString();
-				}
+				this.errormsg = e.toString();
 			}
 			this.loading = false;
 		},
@@ -107,11 +103,7 @@ export default {
 			this.loading = false;
 		},
 	},
-	/*
-	created(){
-		checkAuthorizationToken();
-	},
-	*/
+
 	mounted() {
 		this.getUserProfile(this.username);
 		this.getUserPhotos(this.username);
@@ -137,7 +129,7 @@ export default {
 			<h4>{{ username }}</h4>
 			<button @click="showButtonModal">Change username</button>
 			<div v-if="buttonModal">
-					<h5>Change username</h5>
+					<h6>Change username</h6>
 					<button @click="hideButtonModal">&times;</button>
 				<form @submit.prevent="setMyUserName">
 					<label for="newUsername">New Username</label>
@@ -154,7 +146,7 @@ export default {
 		<div class="profile-photos">
 			<h3>Photos</h3>
     		<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length!=0"/>
-			<h5 v-else>There are no photos yet:'(</h5>
+			<h5 v-else>There are no photos yet :'(</h5>
     	</div>
 	</div>
 	<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
