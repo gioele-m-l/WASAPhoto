@@ -78,23 +78,17 @@
 
 <template>
     <div class="photo-card">
-      <img :src="image" alt="Photo" v-if="!loading">
-      <div class="photo-info">
-        <h2>{{ photo.ownerID }}</h2>
-        <p>{{ photo.timestamp }}</p>
-        <p>{{ photo.likesCount }} likes</p>
-        <p>{{ photo.commentsCount }} comments</p>
-        <button @click="likePhoto">Like</button>
-        <button @click="unlikePhoto">Unlike</button>
-        <!-- <div class="comments">
-          <div v-for="(comment, index) in photo.comments" :key="index">
-            <p>{{ comment }}</p>
-            <button @click="deleteComment(index)">Delete Comment</button>
-          </div> 
-        </div> -->
-      </div>
+        <img :src="image" alt="Photo">
+        <div class="photo-info">
+            <h2>{{ photo.ownerID }}</h2>
+            <p>{{ photo.timestamp }}</p>
+            <p>{{ photo.likesCount }} likes</p>
+            <p>{{ photo.commentsCount }} comments</p>
+            <button @click="likePhoto">Like</button>
+            <button @click="unlikePhoto">Unlike</button>
+        </div>
     </div>
-  </template>
+</template>
 
 <style scoped>
 .photo-card {

@@ -13,20 +13,15 @@ export default {
 		async getMyStream() {
 			this.loading = true;
 			this.errormsg = null;
-
-			if (this.authToken == null) {
-				this.$router.push({ path: "/login" });
-			} else {
-				try {
-				let response = await this.$axios.get("/photos/", {
-						headers: {
-							Authorization: this.authToken,
-						}
-					});
-					this.responseStream = response.data;
-				} catch (e) {
-					this.errormsg = e.toString();
-				}
+			try {
+			let response = await this.$axios.get("/photos/", {
+					headers: {
+						Authorization: this.authToken,
+					}
+				});
+				this.responseStream = response.data;
+			} catch (e) {
+				this.errormsg = e.toString();
 			}
 			this.loading = false;
 		},
@@ -35,6 +30,11 @@ export default {
 
 		},
 	},
+	/*
+	created(){
+		checkAuthorizationToken();
+	},
+	*/
 
 	mounted() {
 		this.getMyStream();
