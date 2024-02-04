@@ -50,16 +50,18 @@ export default {
 						}
 					}
 				);
-				for(let i=0; i<response.data.length; i++){
-					let photoID = response.data[i]['photo-id'];
-					let ownerID = response.data[i]['owner'];
-					let timestamp = response.data[i]['timestamp'];
-					let imagePath = response.data[i]['image-path'];
-					let likesCount = response.data[i]['likes-count'];
-					let commentsCount = response.data[i]['comments-count'];
-					let caption = response.data[i]['caption'];
-					let photo = {photoID, ownerID, timestamp, imagePath, likesCount, commentsCount, caption};
-					this.photos.push(photo);
+				if (response.data != null){
+					for(let i=0; i<response.data.length; i++){
+						let photoID = response.data[i]['photo-id'];
+						let ownerID = response.data[i]['owner'];
+						let timestamp = response.data[i]['timestamp'];
+						let imagePath = response.data[i]['image-path'];
+						let likesCount = response.data[i]['likes-count'];
+						let commentsCount = response.data[i]['comments-count'];
+						let caption = response.data[i]['caption'];
+						let photo = {photoID, ownerID, timestamp, imagePath, likesCount, commentsCount, caption};
+						this.photos.push(photo);
+					}
 				}
 			} catch (e) {
 				this.errormsg = e.toString();

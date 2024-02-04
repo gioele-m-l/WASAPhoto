@@ -17,7 +17,6 @@
                 this.loading = true;
                 this.errormsg = null;
                 try {
-                    console.log(this.photo.imagePath)
                     let response = await this.$axios.get("/images/" + this.photo.imagePath, {
                             headers: {
                                 Authorization: this.authToken,
@@ -99,7 +98,7 @@
             <p>{{ photo.commentsCount }} comments</p>
             <button @click="likePhoto">Like</button>
             <button @click="unlikePhoto">Unlike</button>
-            <button @click="deletePhoto">&times;</button>
+            <button @click="deletePhoto" v-if="photo.ownerID == userID">&times;</button>
         </div>
     </div>
 </template>

@@ -24,16 +24,18 @@ export default {
                         Authorization: this.authToken,
                     }
                 });
-                for(let i=0; i<response.data.length; i++){
-					let photoID = response.data[i]['photo-id'];
-					let ownerID = response.data[i]['owner'];
-					let timestamp = response.data[i]['timestamp'];
-					let imagePath = response.data[i]['image-path'];
-					let likesCount = response.data[i]['likes-count'];
-					let commentsCount = response.data[i]['comments-count'];
-					let caption = response.data[i]['caption'];
-					let photo = {photoID, ownerID, timestamp, imagePath, likesCount, commentsCount, caption};
-					this.photosStream.push(photo);
+				if (response.data.photos != null){
+					for(let i=0; i<response.data.photos.length; i++){
+						let photoID = response.data.photos[i]['photo-id'];
+						let ownerID = response.data.photos[i]['owner'];
+						let timestamp = response.data.photos[i]['timestamp'];
+						let imagePath = response.data.photos[i]['image-path'];
+						let likesCount = response.data.photos[i]['likes-count'];
+						let commentsCount = response.data.photos[i]['comments-count'];
+						let caption = response.data.photos[i]['caption'];
+						let photo = {photoID, ownerID, timestamp, imagePath, likesCount, commentsCount, caption};
+						this.photosStream.push(photo);
+					}
 				}
             }
             catch (e) {
@@ -61,6 +63,24 @@ export default {
         async uploadPhoto() {
 			this.loading = true;
 			this.errormsg = false;
+			if (this.postPhotoFile == null || (this.postPhotoFile.type != "image/jpg" && this.postPhotoFile.type != "image/png")){
+				this.errormsg = "You must select an image file (png/jpg)";
+				this.postPhotoFile = null;
+				this.loading = false;
+				return null;
+			}
+			if (this.postPhotoFile.size/1024 > 16500){
+				// Check if the file size is greater than 16 MB (16500 kB)
+				this.errormsg = "Maximum file size: 16 MB";
+				this.postPhotoFile = null;
+				this.loading = false;
+				return null;
+			}
+			if (this.postPhotoCaption.length > 100) {
+				this.errormsg = "The caption must be maximum 100 characters long"
+				this.loading = false;
+				return null;
+			}
 
 			try {
 				const formData = new FormData();
@@ -120,11 +140,13 @@ export default {
 				id="postPhotoCaption"
 				v-model="postPhotoCaption"
 				type="text"
+				placeholder="Some text..."
 			/>
 
 			<label for="postPhotoFile">File</label>
 			<input
 				id="postPhotoFile"
+				accept=".png, .jpg, .jpeg"
 				@change="uploadFile"
 				type="file"
 				ref="file"
