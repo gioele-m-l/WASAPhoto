@@ -47,7 +47,9 @@ export default {
                 }
 
             } catch (e){
-                this.errormsg = e.toString();
+                if (e.response != null){
+                    this.errormsg = e.toString();
+                }
             }
             this.loading = false;
         },
@@ -109,7 +111,7 @@ export default {
                 <br>
             </div>
         </div>
-        <h5 v-else>We didn't found any user :'( </h5>
+        <h5 v-else>We didn't found any user :'(</h5>
 	</div>
 </template>
 
