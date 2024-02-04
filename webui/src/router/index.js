@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import Login from '../views/Login.vue'
 import MyProfile from '../views/MyProfile.vue'
 import SearchUser from '../views/SearchUser.vue'
+import UserProfile from '../views/UserProfile.vue'
 
 const router = createRouter({
 	history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -11,7 +12,7 @@ const router = createRouter({
 		{path: '/login', component: Login},
 		{path: '/my-profile/', component: MyProfile},
 		{path: '/users/', component: SearchUser},
-		{path: '/some/:id/link', component: HomeView},
+		{path: '/users/:username/', component: UserProfile},
 	]
 });
 
