@@ -25,6 +25,12 @@ func (rt *_router) listFollowers(w http.ResponseWriter, r *http.Request, ps http
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
+	_, err = rt.db.GetUserByUsername(username)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("listBanned: error retrieving the user with username")
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 
 	var dbUsers []database.User
 	dbUsers, err = rt.db.ListFollowers(username)
