@@ -80,7 +80,8 @@ type Image struct {
 type Photo struct {
 	PhotoID       int       `json:"photo-id"`
 	Timestamp     time.Time `json:"timestamp"`
-	Owner         int       `json:"owner"` // UserID
+	Owner         int       `json:"owner-id"` // UserID
+	Username      string    `json:"owner-username"`
 	ImagePath     string    `json:"image-path"`
 	LikesCount    int       `json:"likes-count"`
 	CommentsCount int       `json:"comments-count"`
