@@ -81,6 +81,7 @@ type AppDatabase interface {
 
 	ListFollowers(username string) ([]User, error)
 	ListFollowings(username string) ([]User, error)
+	ListBanned(username string) ([]User, error)
 
 	Ping() error
 }
