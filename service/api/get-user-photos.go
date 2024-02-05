@@ -88,6 +88,8 @@ func (rt *_router) getUserPhotos(w http.ResponseWriter, r *http.Request, ps http
 		var photo Photo
 		photo.FromDatabase(p)
 
+		photo.Username = username
+
 		comments, err := rt.db.GetCommentsByPhotoID(p.PhotoID)
 		if err != nil {
 			ctx.Logger.WithError(err).Error("error in getUserPhotos function: error retrieving comments using photoID")

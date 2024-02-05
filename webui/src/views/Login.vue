@@ -34,6 +34,9 @@ export default {
 		},
 		async refresh() {
 			this.loading = true;
+			this.username = null;
+			this.userID = null;
+			this.token = null;
 			this.errormsg = null;
 			this.loading = false;
 			
@@ -46,16 +49,30 @@ export default {
 </script>
 
 <template>
-	<div>
-		<h1>Login page</h1>
-		<div id="login-box">
-			<span>
-				<label for="username">Username</label>
-				<br>
-				<input type="text" id="username" v-model="username" placeholder="e.g. Maria" required>
-				<button type="submit" @click="doLogin">Login</button>
-			</span>
-			<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-md-6">
+				<h1 class="text-center mt-5">Login page</h1>
+				<div id="login-box">
+					<form @submit.prevent="doLogin" class="p-4 rounded">
+						<div class="form-group">
+							<label for="text-box" class="form-label">Username</label>
+							<input
+								id="text-box"
+								type="text"
+								v-model="username"
+								class="form-control"
+								placeholder="e.g. Maria"
+							/>
+						</div>
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary btn-block">Login</button>
+						</div>
+						
+					</form>
+					<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
