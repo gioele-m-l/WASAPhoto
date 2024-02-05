@@ -191,3 +191,28 @@ func (db *appdbimpl) UpdateProfileImage(uID int, path string) error {
 	_, err := db.c.Exec(`UPDATE Users SET path_to_profile_image = ? WHERE userID = ?`, path, uID)
 	return err
 }
+
+// List followers given a username
+func (db *appdbimpl) ListFollowers(username string) ([]User, error) {
+	var users []User
+	rows, err := db.c.Query(`SELECT * FROM Users INNER JOIN Followers ON Users.userID = Followers.followerID WHERE Followers.followedID = (SELECT userID FROM Users WHERE username = ?)`, username)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var u User
+		err := rows.Scan(&u.UserID, &u.Username, &u.PathToProfileImage)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+
+	if rows.Err() != nil {
+		return nil, err
+	}
+
+	return users, nil
+}

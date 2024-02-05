@@ -79,6 +79,8 @@ type AppDatabase interface {
 	GetCommentByID(commentID int64) (Comment, error)
 	UncommentPhoto(photoId int, commentId int, userID int) error
 
+	ListFollowers(username string) ([]User, error)
+
 	Ping() error
 }
 
