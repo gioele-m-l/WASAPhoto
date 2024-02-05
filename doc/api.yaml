@@ -462,9 +462,89 @@ paths:
         "404":
           description: User not found
 
+  /users/{username}/followers/:
+    parameters:
+      - name: username
+        in: path
+        schema: { $ref: "#/components/schemas/Username" }
+        required: true
+    
+    get:
+      tags: ["User Operations"]
+      summary: List the followers
+      description: |
+        List the followers of the specified user.
+      
+      operationId: listFollowers
+
+      security:
+        - BearerAuth: []
+      
+      responses:
+        "200":
+          description: List of followers retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/User-summary" }
+                minItems: 0
+                maxItems: 1000000
+        
+        "400":
+          description: Bad request
+
+        "401":
+          description: Unauthorized
+        
+        "404":
+          description: User not found
+        
+        "500":
+          description: Internal server error
+  
 
 
-  # AGGIUNGERE PATH: followers
+  /users/{username}/followings/:
+    parameters:
+      - name: username
+        in: path
+        schema: { $ref: "#/components/schemas/Username" }
+        required: true
+    
+    get:
+      tags: ["User Operations"]
+      summary: List the followings
+      description: |
+        List the followings of the specified user.
+      
+      operationId: listFollowings
+
+      security:
+        - BearerAuth: []
+      
+      responses:
+        "200":
+          description: List of followings retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/User-summary" }
+                minItems: 0
+                maxItems: 1000000
+        
+        "400":
+          description: Bad request
+
+        "401":
+          description: Unauthorized
+        
+        "404":
+          description: User not found
+        
+        "500":
+          description: Internal server error
 
   /users/{username}/followings/{user-id}:
     parameters:
@@ -520,6 +600,47 @@ paths:
         
         "404":
           description: user-id not found.
+  
+  /users/{username}/banned/:
+    parameters:
+      - name: username
+        in: path
+        schema: { $ref: "#/components/schemas/Username" }
+        required: true
+    
+    get:
+      tags: ["User Operations"]
+      summary: List the banned users
+      description: |
+        List the users banned by the specified user.
+      
+      operationId: listBanned
+
+      security:
+        - BearerAuth: []
+      
+      responses:
+        "200":
+          description: List of banned users retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/User-summary" }
+                minItems: 0
+                maxItems: 1000000
+        
+        "400":
+          description: Bad request
+
+        "401":
+          description: Unauthorized
+        
+        "404":
+          description: User not found
+        
+        "500":
+          description: Internal server error
 
   /users/{username}/banned/{user-id}:
     parameters:
