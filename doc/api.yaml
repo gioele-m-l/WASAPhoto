@@ -158,7 +158,9 @@ components:
   
         timestamp: { $ref: "#/components/schemas/Timestamp" }
           
-        owner: { $ref: "#/components/schemas/User-ID" } # Utilizzo l'user-id del proprietario
+        owner-id: { $ref: "#/components/schemas/User-ID" } # Utilizzo l'user-id del proprietario
+        
+        owner-username: { $ref: "#/components/schemas/Username" }
 
         image-path: { $ref: "#/components/schemas/Image-path" }
         
