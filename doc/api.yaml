@@ -158,7 +158,9 @@ components:
   
         timestamp: { $ref: "#/components/schemas/Timestamp" }
           
-        owner: { $ref: "#/components/schemas/User-ID" } # Utilizzo l'user-id del proprietario
+        owner-id: { $ref: "#/components/schemas/User-ID" } # Utilizzo l'user-id del proprietario
+        
+        owner-username: { $ref: "#/components/schemas/Username" }
 
         image-path: { $ref: "#/components/schemas/Image-path" }
         
@@ -198,6 +200,8 @@ components:
       description: |
         Short text for the user to tell something.
       type: string
+      example: Mario
+      pattern: "^.*?$"
       minLength: 0
       maxLength: 255
       readOnly: false
@@ -662,6 +666,8 @@ paths:
                 caption:
                   description: Short text where the user can say something.
                   type: string
+                  example: Mario
+                  pattern: "^.*?$"
                   minLength: 0
                   maxLength: 100
                 

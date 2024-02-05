@@ -19,37 +19,31 @@ export default {}
 			<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
 				<div class="position-sticky pt-3 sidebar-sticky">
 					<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
-						<span>General</span>
+						<span>Menu</span>
 					</h6>
 					<ul class="nav flex-column">
 						<li class="nav-item">
 							<RouterLink to="/" class="nav-link">
 								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#home"/></svg>
-								Home
+								Stream
+							</RouterLink>
+						</li>
+						<li class="nav-item">
+							<RouterLink to="/users/" class="nav-link">
+								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#search"/></svg>
+								Search
+							</RouterLink>
+						</li>
+						<li class="nav-item">
+							<RouterLink to="/my-profile/" class="nav-link">
+								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#user"/></svg>
+								My Profile
 							</RouterLink>
 						</li>
 						<li class="nav-item">
 							<RouterLink to="/login" class="nav-link">
-								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#layout"/></svg>
-								Login
-							</RouterLink>
-						</li>
-						<li class="nav-item">
-							<RouterLink :to="'/users/' + 'gioele' + '/'" class="nav-link">
 								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#key"/></svg>
-								My Profile
-							</RouterLink>
-						</li>
-					</ul>
-
-					<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
-						<span>Secondary menu</span>
-					</h6>
-					<ul class="nav flex-column">
-						<li class="nav-item">
-							<RouterLink :to="'/some/' + 'variable_here' + '/path'" class="nav-link">
-								<svg class="feather"><use href="/feather-sprite-v4.29.0.svg#file-text"/></svg>
-								Item 1
+								Login
 							</RouterLink>
 						</li>
 					</ul>
