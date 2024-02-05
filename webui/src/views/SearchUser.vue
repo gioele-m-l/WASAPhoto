@@ -113,12 +113,19 @@ export default {
         <h4>Users</h4>
         <div id="user-list-box" v-if="userSums.length > 0">
             <div class="user-sum-box" v-for="userSum in userSums" :key="userSum.userID">
-                <img :src="userSum.image" alt="Profile image" class="rounded-circle mb-3" style="width: 200px;">
                 <RouterLink :to="'/users/' + userSum.username + '/'" class="nav-link" v-if="this.userID != userSum.userID">
-					{{ userSum.username }}
+					<!--
+                    <img :src="userSum.image" alt="Profile image" class="rounded-circle mb-3" style="width: 30px;" v-if="image != null">
+                    <img v-else src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" class="rounded-circle mb-3" style="width: 30px;">
+                    -->
+                    {{ userSum.username }}
 				</RouterLink>
                 <RouterLink v-else to='/my-profile/' class="nav-link">
-					{{ userSum.username }}
+                    <!--
+                    <img :src="userSum.image" alt="Profile image" class="rounded-circle mb-3" style="width: 30px;" v-if="image != null">
+                    <img v-else src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" class="rounded-circle mb-3" style="width: 30px;">
+                    -->
+                    {{ userSum.username }}
 				</RouterLink>
                 <br>
             </div>

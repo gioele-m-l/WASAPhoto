@@ -143,9 +143,11 @@ export default {
 
 <template>
 	<div class="user-profile" v-if="!loading">
+		<!--
 		<div class="profile-image">
 			<img :src="profile['profile-image-path']" alt="Profile image"/>
 		</div>
+		-->
 		<div class="profile-stats">
     		<span>Photos: {{ profile['photos-count'] }}</span>
 			<br>

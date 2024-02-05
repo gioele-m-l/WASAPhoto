@@ -78,13 +78,13 @@ export default {
 					for(let i=0; i<response.data.length; i++){
 						let photoID = response.data[i]['photo-id'];
 						let ownerID = response.data[i]['owner-id'];
-						let ownerUsername = response.data[i]['owner-username']
+						let ownerUsername = response.data[i]['owner-username'];
 						let timestamp = response.data[i]['timestamp'];
 						let imagePath = response.data[i]['image-path'];
 						let likesCount = response.data[i]['likes-count'];
 						let commentsCount = response.data[i]['comments-count'];
 						let caption = response.data[i]['caption'];
-						let photo = {photoID, ownerID, timestamp, imagePath, likesCount, commentsCount, caption};
+						let photo = {photoID, ownerID, ownerUsername, timestamp, imagePath, likesCount, commentsCount, caption};
 						this.photos.push(photo);
 					}
 				}
@@ -197,8 +197,10 @@ export default {
 		</div>
 	</div>
 	<div v-if="!loading">
+		<!--
 		<div class="profile-image">
-			<img :src="image" alt="Profile image" class="rounded-circle mb-3" style="width: 200px;"/>
+			<img :src="image" alt="Profile image" class="rounded-circle mb-3" style="width: 150px;" v-if="image != null"/>
+			<img v-else src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" class="rounded-circle mb-3" style="width: 1500px;">
 			<button @click="showModalProPic"><svg class="feather"><use href="/feather-sprite-v4.29.0.svg#tool"/></svg></button>
 			<div class="upload-propic-box" v-if="modalProPic">
 				<button @click="hideModalProPic">&times;</button>
@@ -215,6 +217,7 @@ export default {
 				</form>
 			</div>
 		</div>
+		-->
 
 		<ul class="list-group list-group-flush">
     		<li class="list-group-item">Photos: {{ profile['photos-count'] }}</li>

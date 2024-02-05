@@ -94,7 +94,7 @@
                 <div class="card mb-3 shadow-sm">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center mt-2">
-                            <h2 class="text-muted">{{photo.username}}</h2>
+                            <h4>{{ photo.ownerUsername }}</h4>
                             <button @click="deletePhoto" v-if="photo.ownerID == userID" class="btn btn-outline-primary btn-sm">&times;</button>
                         </div>
                     </div>
