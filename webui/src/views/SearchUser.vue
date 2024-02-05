@@ -56,22 +56,23 @@ export default {
         async getImageFile(imagePath) {
                 this.loading = true;
                 this.errormsg = null;
+                let image = null;
                 try {
                     let response = await this.$axios.get("/images/" + imagePath, {
                             headers: {
-                                Authorization: this.authToken,
+                                Authorization: this.token,
                             }
                         }
                     );
                     let ext = response.headers['content-type'].split('/')[1];
-                    return 'data:image/'+ext+';base64,'+response.data;
+                    image = 'data:image/'+ext+';base64,'+response.data;
                 } catch(e) {
                     if (!e.response.status == 404){
                         this.errormsg = e.toString();
                     }
                 }
                 this.loading = false;
-                return null
+                return image
             },
 	},
 	mounted() {
@@ -81,27 +82,38 @@ export default {
 </script>
 
 <template>
-	<div>
-		<h1>Search</h1>
-		<div id="search-box">
-			<span>
-				<form @submit.prevent="listUsers">
-                    <label for="username">Username</label>
-                    <input
-                        id="username"
-                        v-model="username"
-                        type="text"
-                    />
-                    <button type="submit"><svg class="feather"><use href="/feather-sprite-v4.29.0.svg#search"/></svg></button>
-                </form>
-            </span>
-			<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
-		</div>
-        <hr>
-        <h2>Users</h2>
+	<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Search</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary" @click="refresh">
+                    Refresh
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="search-box">
+        <div>
+            <form @submit.prevent="listUsers">
+                <label for="username" class="form-label">Username</label>
+                <br>
+                <input
+                    id="username"
+                    v-model="username"
+                    type="text"
+                    placeholder="e.g. Maria"
+                />
+                <button type="submit"><svg class="feather"><use href="/feather-sprite-v4.29.0.svg#search"/></svg></button>
+            </form>
+        </div>
+        <ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
+    </div>
+    <hr>
+    <div>
+        <h4>Users</h4>
         <div id="user-list-box" v-if="userSums.length > 0">
             <div class="user-sum-box" v-for="userSum in userSums" :key="userSum.userID">
-                <img :src="userSum.image" alt="Profile image">
+                <img :src="userSum.image" alt="Profile image" class="rounded-circle mb-3" style="width: 200px;">
                 <RouterLink :to="'/users/' + userSum.username + '/'" class="nav-link" v-if="this.userID != userSum.userID">
 					{{ userSum.username }}
 				</RouterLink>
@@ -111,7 +123,9 @@ export default {
                 <br>
             </div>
         </div>
-        <h5 v-else>We didn't found any user :'(</h5>
+        <div v-else>
+            <h5><img src="https://i.redd.it/4s978dxj7xp51.jpg" style="width: 100px; heigth: 100px;"></h5>
+        </div>
 	</div>
 </template>
 

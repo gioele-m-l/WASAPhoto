@@ -79,7 +79,7 @@
                 }
 
                 this.loading = false;
-            }
+            },
         },
 
         mounted() {
@@ -89,37 +89,37 @@
 </script>
 
 <template>
-    <div class="photo-card">
-        <img :src="image" alt="Photo">
-        <div class="photo-info">
-            <h2>{{ photo.ownerID }}</h2>
-            <p>{{ photo.timestamp }}</p>
-            <p>{{ photo.likesCount }} likes</p>
-            <p>{{ photo.commentsCount }} comments</p>
-            <button @click="likePhoto">Like</button>
-            <button @click="unlikePhoto">Unlike</button>
-            <button @click="deletePhoto" v-if="photo.ownerID == userID">&times;</button>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <h2 class="text-muted">{{photo.username}}</h2>
+                            <button @click="deletePhoto" v-if="photo.ownerID == userID" class="btn btn-outline-primary btn-sm">&times;</button>
+                        </div>
+                    </div>
+                    <img :src="image" alt="Photo" class="card-img-top">
+                    <div class="card-body">
+                        <div class="d-flex align-items-right">
+                            <small class="text-muted">{{ photo.timestamp }}</small>
+                        </div>
+                        <div>
+                            <p>{{ photo.caption }}</p>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <span class="text-muted">{{ photo.likesCount }} likes</span>
+                            <span class="text-muted">{{ photo.commentsCount }} comments</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <button @click="likePhoto" class="btn btn-outline-primary btn-sm">Like</button>
+                            <button @click="unlikePhoto" class="btn btn-outline-primary btn-sm">Unlike</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+
 </template>
 
-<style scoped>
-.photo-card {
-  width: 300px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 10px;
-  margin: 10px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  transition: 0.3s;
-}
-
-.photo-card:hover {
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-}
-
-.photo-card img {
-  width: 100%;
-  height: auto;
-}
+<style>
 </style>

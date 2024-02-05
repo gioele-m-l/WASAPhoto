@@ -53,7 +53,8 @@ export default {
 		},
 
 		uploadFile(){
-			let ftype = this.$refs.file.files[0].name.split('.')[1]
+			let ftype = this.$refs.file.files[0].name.split('.')
+			ftype = ftype[ftype.length -1]
 			if (ftype == "jpeg"){
 				ftype = "jpg"
 			}
