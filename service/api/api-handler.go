@@ -41,6 +41,7 @@ func (rt *_router) Handler() http.Handler {
 
 	// Other list operations
 	rt.router.GET("/users/:username/followers/", rt.wrap(rt.listFollowers))
+	rt.router.GET("/users/:username/followings/", rt.wrap(rt.listFollowings))
 
 	// Special routes
 	rt.router.GET("/liveness", rt.liveness)

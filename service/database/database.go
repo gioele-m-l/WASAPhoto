@@ -80,6 +80,7 @@ type AppDatabase interface {
 	UncommentPhoto(photoId int, commentId int, userID int) error
 
 	ListFollowers(username string) ([]User, error)
+	ListFollowings(username string) ([]User, error)
 
 	Ping() error
 }
