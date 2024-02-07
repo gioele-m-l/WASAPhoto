@@ -115,23 +115,28 @@ export default {
     <div v-if="search">
         <h4>Users</h4>
         <div id="user-list-box" v-if="userSums.length > 0">
-            <div class="user-sum-box" v-for="userSum in userSums" :key="userSum.userID">
-                <RouterLink :to="'/users/' + userSum.username + '/'" class="nav-link" v-if="this.userID != userSum.userID">
-					<!--
-                    <img :src="userSum.image" alt="Profile image" class="rounded-circle mb-3" style="width: 30px;" v-if="image != null">
-                    <img v-else src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" class="rounded-circle mb-3" style="width: 30px;">
-                    -->
-                    {{ userSum.username }}
-				</RouterLink>
-                <RouterLink v-else to='/my-profile/' class="nav-link">
-                    <!--
-                    <img :src="userSum.image" alt="Profile image" class="rounded-circle mb-3" style="width: 30px;" v-if="image != null">
-                    <img v-else src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" class="rounded-circle mb-3" style="width: 30px;">
-                    -->
-                    {{ userSum.username }}
-				</RouterLink>
-                <br>
-            </div>
+            <ul>
+                <div class="user-sum-box" v-for="(userSum, index) in userSums" :key="index">
+                    <li>
+                        <RouterLink :to="'/users/' + userSum.username + '/'" class="nav-link" v-if="this.userID != userSum.userID">
+                            <!--
+                            <img :src="userSum.image" alt="Profile image" class="rounded-circle mb-3" style="width: 30px;" v-if="image != null">
+                            <img v-else src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" class="rounded-circle mb-3" style="width: 30px;">
+                            -->
+                            {{ userSum.username }}
+                        </RouterLink>
+                        <RouterLink v-else to='/my-profile/' class="nav-link">
+                            <!--
+                            <img :src="userSum.image" alt="Profile image" class="rounded-circle mb-3" style="width: 30px;" v-if="image != null">
+                            <img v-else src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" class="rounded-circle mb-3" style="width: 30px;">
+                            -->
+                            {{ userSum.username }}
+                        </RouterLink>
+                    </li>
+                </div>
+                
+            </ul>
+            
         </div>
         <div v-else>
             <!--

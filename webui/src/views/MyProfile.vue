@@ -25,6 +25,13 @@ export default {
 	},
 	methods: {
 
+		async refresh(){
+			this.profile = {};
+			this.photos = [];
+			this.getUserProfile(this.username);
+			this.getUserPhotos(this.username);
+		},
+
 		async getImageFile(imagePath){
 			this.loading = true;
 			this.errormsg = null;
@@ -114,9 +121,9 @@ export default {
 					}
 				})
 				this.hideButtonModal();
-				
 				this.username = this.newUsername;
 				sessionStorage.setItem("username", this.username);
+				this.refresh();
 			} catch (e) {
 				if(e.response.status == 400){
 					this.errormsgChUname = "This username is invalid"
@@ -170,7 +177,7 @@ export default {
 									'Access-Control-Allow-Origin': '*'};
 			try{
 				let response = await this.$axios.put("/users/"+this.username+"/profile-image", this.uploadPhotoFile, { headers });
-
+				this.refresh();
 			} catch (e){
 				this.errormsg = e.toString();
 			}
@@ -179,8 +186,7 @@ export default {
 	},
 
 	mounted() {
-		this.getUserProfile(this.username);
-		this.getUserPhotos(this.username);
+		this.refresh();
 	}
 }
 </script>
@@ -218,30 +224,54 @@ export default {
 			</div>
 		</div>
 		-->
+		<div class="container-fluid">
+			<div class="row">
+				<div id="username-box" class="col d-flex align-items-center justify-content-start">
+					<h4>Username: {{ username }}</h4>
+					<button class="btn btn-icon" @click="showButtonModal" v-if="!buttonModal" title="Change username"><svg class="feather"><use href="/feather-sprite-v4.29.0.svg#tool"/></svg></button>
+					<div v-else>
+						<h6>
+							Change username
+							<button class="btn btn-icon" @click="hideButtonModal">&times;</button>
+						</h6>
+						<div>
+							<form @submit.prevent="setMyUserName">
+								<label for="newUsername">New Username</label>
+								<br>
+								<input
+									id="newUsername"
+									v-model="newUsername"
+								/>
+								<button class="btn btn-sm btn-primary" type="submit">Confirm</button>
+							</form>
+						</div>
+					</div>
+					<ErrorMsg v-if="errormsgChUname" :msg="errormsgChUname"></ErrorMsg>
+				</div>
 
-		<ul class="list-group list-group-flush">
-    		<li class="list-group-item">Photos: {{ profile['photos-count'] }}</li>
-    		<li class="list-group-item">Following: {{ profile['followings-count'] }}</li>
-    		<li class="list-group-item">Followers: {{ profile['followers-count'] }}</li>
-		</ul>
-
-		<div>
-			<h4>{{ username }}</h4>
-			<button @click="showButtonModal">Change username</button>
-			<div v-if="buttonModal">
-					<h6>Change username</h6>
-					<button @click="hideButtonModal">&times;</button>
-				<form @submit.prevent="setMyUserName">
-					<label for="newUsername">New Username</label>
-					<input
-						id="newUsername"
-						v-model="newUsername"
-					/>
-					<button type="submit">Confirm</button>
-				</form>
+				<div id="user-stats" class="col">
+					<ul class="list-group list-group-horizontal">
+						<li class="list-group-item text-center w-50">
+							Photos
+							<br>
+							{{ profile['photos-count'] }}
+						</li>
+						<li class="list-group-item text-center w-50">
+							Followers
+							<br>
+							{{ profile['followers-count'] }}
+						</li>
+						<li class="list-group-item text-center w-50">
+							Following
+							<br>
+							{{ profile['followings-count'] }}
+						</li>
+					</ul>
+				</div>
+				<div class="col"></div>
 			</div>
-			<ErrorMsg v-if="errormsgChUname" :msg="errormsgChUname"></ErrorMsg>
 		</div>
+
     	<hr>
 		<div class="profile-photos">
 			<h3>Photos</h3>
