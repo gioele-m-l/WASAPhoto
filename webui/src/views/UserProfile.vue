@@ -214,30 +214,55 @@ export default {
 </script>
 
 <template>
+	<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+		<h1 class="h2">{{ profile['username'] }}'s profile</h1>
+		<div class="btn-toolbar mb-2 mb-md-0">
+			<div class="btn-group me-2">
+				<button type="button" class="btn btn-sm btn-outline-secondary" @click="refresh">
+					Refresh
+				</button>
+			</div>
+		</div>
+	</div>
 	<div class="user-profile" v-if="!loading">
 		<!--
 		<div class="profile-image">
 			<img :src="profile['profile-image-path']" alt="Profile image"/>
 		</div>
 		-->
-		<div class="profile-stats">
-    		<span>Photos: {{ profile['photos-count'] }}</span>
-			<br>
-    		<span>Following: {{ profile['followings-count'] }}</span>
-			<br>
-    		<span>Followers: {{ profile['followers-count'] }}</span>
-    	</div>
-
-		<div>
-			<h4>{{ username }}</h4>
-            <div class="user-profile-follow-unfollow" v-if="!banned">
-                <button @click="followUser" v-if="!followed">Follow</button>
-                <button @click="unfollowUser" v-else>Unfollow</button>
-            </div>
-            <div class="user-profile-ban-unban">
-                <button @click="banUser" v-if="!banned">Ban</button>
-                <button @click="unbanUser" v-else>Unban</button>
-            </div>
+		<div class="container-fluid">
+			<div class="row">
+				<div id="username-box" class="col d-flex align-items-center justify-content-start">
+					<div class="user-profile-follow-unfollow" v-if="!banned">
+						<button class="btn btn-primary btn-block" @click="followUser" v-if="!followed">Follow</button>
+						<button class="btn btn-secondary btn-block" @click="unfollowUser" v-else>Unfollow</button>
+					</div>
+					<div class="user-profile-ban-unban">
+						<button class="btn btn-danger btn-block" @click="banUser" v-if="!banned">Ban</button>
+						<button class="btn btn-secondary btn-block" @click="unbanUser" v-else>Unban</button>
+					</div>
+				</div>
+				<div id="user-stats" class="col">
+					<ul class="list-group list-group-horizontal">
+						<li class="list-group-item text-center w-50">
+							Photos
+							<br>
+							{{ profile['photos-count'] }}
+						</li>
+						<li class="list-group-item text-center w-50">
+							Followers
+							<br>
+							{{ profile['followers-count'] }}
+						</li>
+						<li class="list-group-item text-center w-50">
+							Following
+							<br>
+							{{ profile['followings-count'] }}
+						</li>
+					</ul>
+				</div>
+				<div class="col"></div>
+			</div>
 		</div>
     	<hr>
 		<div class="profile-photos">
