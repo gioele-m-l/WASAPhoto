@@ -97,11 +97,15 @@ func New(db *sql.DB) (AppDatabase, error) {
 		return nil, errors.New("database is required when building a AppDatabase")
 	}
 
-	// Turning on the support for foreign keys
-	_, errPragma := db.Exec(`PRAGMA foreign_keys= ON`)
-	if errPragma != nil {
-		return nil, fmt.Errorf("error setting pragmas: %w", errPragma)
-	}
+	/*
+		// Foreign keys are enabled in cmd/webapi/main.go
+
+		// Turning on the support for foreign keys
+		_, errPragma := db.Exec(`PRAGMA foreign_keys= ON`)
+		if errPragma != nil {
+			return nil, fmt.Errorf("error setting pragmas: %w", errPragma)
+		}
+	*/
 
 	// Check if table exists. If not, the database is empty, and we need to create the structure
 	var tableName string
