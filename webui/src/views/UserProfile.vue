@@ -18,11 +18,80 @@ export default {
             username: this.$route.params.username,
 			profile: {},
 			photos: [],
-			buttonModal: false,
-            newUsername: "",
+
+			followed: false,
+			banned: false,
 		}
 	},
 	methods: {
+
+		async refresh(){
+			this.banned = false;
+			this.followed = false;
+			this.profile = {};
+			this.photos = [];
+			this.checkBan();
+			if(this.banned != true){
+				this.checkFollow();
+			}
+			this.getUserProfile(this.username);
+			this.getUserPhotos(this.username);
+		},
+
+		async checkBan(){
+			this.loading = true;
+			this.errormsg = false;
+
+			try {
+				let response = await this.$axios.get("/users/" + this.sessionUsername + "/banned/", {
+					headers : {
+						Authorization: this.sessionAuthToken,
+					}
+				})
+
+				if(response.data != null){
+					for(let i=0; i<response.data.length; i++){
+						if(response.data[i]["username"] == this.username){
+							this.banned = true;
+							break;
+						}
+					}
+					
+				}
+			} catch (e){
+				this.errormsg = e.toString();
+			}
+
+			this.loading = false;
+		},
+
+		async checkFollow(){
+			this.loading = true;
+			this.errormsg = false;
+
+			try {
+				let response = await this.$axios.get("/users/" + this.sessionUsername + "/followings/", {
+					headers : {
+						Authorization: this.sessionAuthToken,
+					}
+				})
+
+				if(response.data != null){
+					for(let i=0; i<response.data.length; i++){
+						if(response.data[i]["username"] == this.username){
+							this.followed = true;
+							break;
+						}
+					}
+					
+				}
+			} catch (e){
+				this.errormsg = e.toString();
+			}
+
+			this.loading = false;
+		},
+
 		async getUserProfile(username) {
 			this.loading = true;
 			this.errormsg = null;
@@ -81,6 +150,7 @@ export default {
                         Authorization: this.sessionAuthToken,
                     }
                 })
+				this.refresh();
             } catch(e){
                 this.errormsg = e.toString();
             }
@@ -96,6 +166,7 @@ export default {
                         Authorization: this.sessionAuthToken,
                     }
                 })
+				this.refresh();
             } catch(e){
                 this.errormsg = e.toString();
             }
@@ -111,6 +182,7 @@ export default {
                         Authorization: this.sessionAuthToken,
                     }
                 })
+				this.refresh();
             } catch(e){
                 this.errormsg = e.toString();
             }
@@ -126,6 +198,7 @@ export default {
                         Authorization: this.sessionAuthToken,
                     }
                 })
+				this.refresh();
             } catch(e){
                 this.errormsg = e.toString();
             }
@@ -135,8 +208,7 @@ export default {
 	},
 
 	mounted() {
-		this.getUserProfile(this.username);
-		this.getUserPhotos(this.username);
+		this.refresh();
 	}
 }
 </script>
@@ -158,13 +230,13 @@ export default {
 
 		<div>
 			<h4>{{ username }}</h4>
-            <div class="user-profile-follow-unfollow">
-                <button @click="followUser">Follow</button>
-                <button @click="unfollowUser">Unfollow</button>
+            <div class="user-profile-follow-unfollow" v-if="!banned">
+                <button @click="followUser" v-if="!followed">Follow</button>
+                <button @click="unfollowUser" v-else>Unfollow</button>
             </div>
             <div class="user-profile-ban-unban">
-                <button @click="banUser">Ban</button>
-                <button @click="unbanUser">Unban</button>
+                <button @click="banUser" v-if="!banned">Ban</button>
+                <button @click="unbanUser" v-else>Unban</button>
             </div>
 		</div>
     	<hr>
