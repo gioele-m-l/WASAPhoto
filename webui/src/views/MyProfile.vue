@@ -248,8 +248,9 @@ export default {
     		<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length!=0"/>
 			<div v-else>
 				<h5>There are no photos yet :'(</h5>
-				<h6>Post something<img src="https://i.redd.it/4s978dxj7xp51.jpg" style="width: 100px; heigth: 100px;"></h6>
-				
+				<!--
+					<h6>Post something<img src="https://i.redd.it/4s978dxj7xp51.jpg" style="width: 100px; heigth: 100px;"></h6>
+				-->
 			</div>
     	</div>
 	</div>
