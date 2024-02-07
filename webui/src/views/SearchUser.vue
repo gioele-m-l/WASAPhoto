@@ -10,6 +10,7 @@ export default {
 			token: sessionStorage.getItem("auth-token"),
             username: "",
             userSums: [],
+            search: false,
 		}
 	},
 	methods: {
@@ -17,12 +18,14 @@ export default {
             this.loading = true;
             this.errormsg = false;
             this.username = "";
+            this.search = false;
             this.userSums = [];
             this.loading = false;
         },
 		async listUsers(){
             this.loading = true;
             this.errormsg = false;
+            this.search = true;
             this.userSums = [];
             try {
                 let response = await this.$axios.get("/users/", {
@@ -95,7 +98,7 @@ export default {
     <div id="search-box">
         <div>
             <form @submit.prevent="listUsers">
-                <label for="username" class="form-label">Username</label>
+                <label for="username" class="form-label">Find a user using the username</label>
                 <br>
                 <input
                     id="username"
@@ -109,7 +112,7 @@ export default {
         <ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
     </div>
     <hr>
-    <div>
+    <div v-if="search">
         <h4>Users</h4>
         <div id="user-list-box" v-if="userSums.length > 0">
             <div class="user-sum-box" v-for="userSum in userSums" :key="userSum.userID">
@@ -131,9 +134,15 @@ export default {
             </div>
         </div>
         <div v-else>
-            <h5><img src="https://i.redd.it/4s978dxj7xp51.jpg" style="width: 100px; heigth: 100px;"></h5>
+            <!--
+                <h5><img src="https://i.redd.it/4s978dxj7xp51.jpg" style="width: 100px; heigth: 100px;"></h5>
+            -->
+            <p>...</p>
         </div>
 	</div>
+    <div v-else>
+        <h5>Here you'll see the list of users</h5>
+    </div>
 </template>
 
 <style>
