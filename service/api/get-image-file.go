@@ -36,5 +36,9 @@ func (rt *_router) getImageFile(w http.ResponseWriter, r *http.Request, ps httpr
 	w.Header().Set("Content-Type", "image/"+path[len(path)-3:])
 	data = []byte(base64.StdEncoding.EncodeToString(data))
 	ctx.Logger.Info("Serving: " + path)
-	w.Write(data)
+	_, err = w.Write(data)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("getImageFile: error sending file")
+		return
+	}
 }

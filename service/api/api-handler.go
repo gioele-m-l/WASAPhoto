@@ -33,6 +33,7 @@ func (rt *_router) Handler() http.Handler {
 	// Like operations
 	rt.router.PUT("/photos/:photo-id/likes/:user-id", rt.wrap(rt.likePhoto))
 	rt.router.DELETE("/photos/:photo-id/likes/:user-id", rt.wrap(rt.unlikePhoto))
+	rt.router.GET("/photos/:photo-id/likes/:user-id", rt.wrap(rt.getPhotoLike))
 
 	// Comment operations
 	rt.router.GET("/photos/:photo-id/comments/", rt.wrap(rt.listComments))

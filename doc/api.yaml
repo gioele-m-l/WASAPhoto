@@ -486,6 +486,7 @@ paths:
           content:
             application/json:
               schema:
+                description: Array of users that follow this user
                 type: array
                 items: { $ref: "#/components/schemas/User-summary" }
                 minItems: 0
@@ -529,6 +530,7 @@ paths:
           content:
             application/json:
               schema:
+                description: Array of users followed by this user
                 type: array
                 items: { $ref: "#/components/schemas/User-summary" }
                 minItems: 0
@@ -625,6 +627,7 @@ paths:
           content:
             application/json:
               schema:
+                description: Array of users banned by this user
                 type: array
                 items: { $ref: "#/components/schemas/User-summary" }
                 minItems: 0
@@ -896,6 +899,33 @@ paths:
         in: path
         required: true
         schema: { $ref: "#/components/schemas/User-ID" }
+    
+    get:
+      tags: ["Photo Operations"]
+      summary: Get the like of the photo if present
+      description: |
+        Return the user-id if there is the user's like.
+      
+      operationId: getPhotoLike
+
+      security:
+        - BearerAuth: []
+      
+      responses:
+        "200":
+          description: The like is present
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User-ID" }
+        
+        "400":
+          description: Bad request
+        
+        "401":
+          description: Unauthorized
+        
+        "404":
+          description: Not found
     
     put:
       tags: ["Photo Operations"]
