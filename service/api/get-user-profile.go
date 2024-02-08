@@ -58,18 +58,6 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	// Check if the user that made the request didn't block the other user
-	blocked, err = rt.db.CheckBan(thisUser.UserID, userDB.UserID)
-	if err != nil {
-		ctx.Logger.WithError(err).Error("error in getUserProfile")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if blocked {
-		ctx.Logger.Info("getUserPhotos: the user blocked the other user")
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
 
 	// Creating the base User obj for the response
 	var user User
