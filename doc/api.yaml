@@ -486,6 +486,7 @@ paths:
           content:
             application/json:
               schema:
+                description: Array of users that follow this user
                 type: array
                 items: { $ref: "#/components/schemas/User-summary" }
                 minItems: 0
@@ -529,6 +530,7 @@ paths:
           content:
             application/json:
               schema:
+                description: Array of users followed by this user
                 type: array
                 items: { $ref: "#/components/schemas/User-summary" }
                 minItems: 0
@@ -625,6 +627,7 @@ paths:
           content:
             application/json:
               schema:
+                description: Array of users banned by this user
                 type: array
                 items: { $ref: "#/components/schemas/User-summary" }
                 minItems: 0
