@@ -63,7 +63,7 @@ export default {
 
         async uploadPhoto() {
 			this.loading = true;
-			this.errormsg = false;
+			this.errormsg = null;
 			if (this.postPhotoFile == null || (this.postPhotoFile.type != "image/jpg" && this.postPhotoFile.type != "image/png")){
 				this.errormsg = "You must select an image file (png/jpg)";
 				this.postPhotoFile = null;

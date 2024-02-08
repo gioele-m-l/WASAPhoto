@@ -25,9 +25,12 @@ export default {
 	},
 	methods: {
 
-		async refresh(){
+		refresh(){
 			this.profile = {};
 			this.photos = [];
+			this.newUsername = "";
+			this.errormsg = null;
+			this.errormsgChUname = null;
 			this.getUserProfile(this.username);
 			this.getUserPhotos(this.username);
 		},
