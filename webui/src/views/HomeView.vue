@@ -15,6 +15,12 @@ export default {
         };
     },
     methods: {
+		refresh(){
+			this.errormsg = null;
+			this.photosStream = [];
+			this.getMyStream();
+		},
+
         async getMyStream() {
             this.loading = true;
             this.errormsg = null;
@@ -117,9 +123,6 @@ export default {
 					<button type="button" class="btn btn-sm btn-outline-secondary" @click="refresh">
 						Refresh
 					</button>
-					<button type="button" class="btn btn-sm btn-outline-secondary" @click="exportList">
-						Export
-					</button>
 				</div>
 				<div class="btn-group me-2">
 					<button type="button" class="btn btn-sm btn-outline-primary" @click="showPostPhotoModal">
@@ -157,7 +160,7 @@ export default {
 	</div>
 
 	<div class="stream-photos">
-		<PhotoCard v-for="photo in photosStream" :key="photo.photoID" :photo="photo" v-if="photosStream.length != 0" />
+		<PhotoCard v-for="photo in photosStream" :key="photo.photoID" :photo="photo" v-if="photosStream.length != 0" @photoUpdated="refresh"/>
 		<h5 v-else>There are no photos yet :'(</h5>
 	</div>
 </template>

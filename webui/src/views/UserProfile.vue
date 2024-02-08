@@ -274,7 +274,7 @@ export default {
 			<hr>
 			<div class="profile-photos">
 				<h3>Photos</h3>
-				<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length!=0"/>
+				<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length!=0" @photoUpdated="refresh"/>
 				<h5 v-else>There are no photos yet :'(</h5>
 			</div>
 		</div>

@@ -55,11 +55,11 @@ export default {
 			this.loading = false;
 		},
 
-		async getUserProfile(username) {
+		async getUserProfile() {
 			this.loading = true;
 			this.errormsg = null;
 			try {
-				let response = await this.$axios.get("/users/" + username + "/", {
+				let response = await this.$axios.get("/users/" + this.username + "/", {
 						headers: {
 							Authorization: this.authToken,
 						}
@@ -74,11 +74,11 @@ export default {
 			this.loading = false;	
 		},
 
-		async getUserPhotos(username){
+		async getUserPhotos(){
 			this.loading = true;
 			this.errormsg = null;
 			try {
-				let response = await this.$axios.get("/users/" + username + "/photos/", {
+				let response = await this.$axios.get("/users/" + this.username + "/photos/", {
 						headers: {
 							Authorization: this.authToken,
 						}
@@ -278,7 +278,7 @@ export default {
     	<hr>
 		<div class="profile-photos">
 			<h3>Photos</h3>
-    		<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length!=0"/>
+    		<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length!=0" @photoUpdated="refresh"/>
 			<div v-else>
 				<h5>There are no photos yet :'(</h5>
 				<!--
