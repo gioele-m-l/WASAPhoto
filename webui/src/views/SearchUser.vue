@@ -5,9 +5,9 @@ export default {
 		return {
 			errormsg: null,
 			loading: false,
-			username: sessionStorage.getItem("username"),
-			userID: sessionStorage.getItem("user-id"),
-			token: sessionStorage.getItem("auth-token"),
+			sessionUsername: sessionStorage.getItem("username"),
+			sessionUserID: sessionStorage.getItem("user-id"),
+			sessionToken: sessionStorage.getItem("auth-token"),
             username: "",
             userSums: [],
             search: false,
@@ -22,6 +22,7 @@ export default {
             this.userSums = [];
             this.loading = false;
         },
+
 		async listUsers(){
             this.loading = true;
             this.errormsg = false;
@@ -34,7 +35,7 @@ export default {
                     },
 
                     headers: {
-                        Authorization: this.token,
+                        Authorization: this.sessionToken,
                     }
                 })
 
@@ -63,7 +64,7 @@ export default {
                 try {
                     let response = await this.$axios.get("/images/" + imagePath, {
                             headers: {
-                                Authorization: this.token,
+                                Authorization: this.sessionToken,
                             }
                         }
                     );
@@ -118,7 +119,7 @@ export default {
             <ul>
                 <div class="user-sum-box" v-for="(userSum, index) in userSums" :key="index">
                     <li>
-                        <RouterLink :to="'/users/' + userSum.username + '/'" class="nav-link" v-if="this.userID != userSum.userID">
+                        <RouterLink :to="'/users/' + userSum.username + '/'" class="nav-link" v-if="this.sessionUserID != userSum.userID">
                             <!--
                             <img :src="userSum.image" alt="Profile image" class="rounded-circle mb-3" style="width: 30px;" v-if="image != null">
                             <img v-else src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" class="rounded-circle mb-3" style="width: 30px;">
