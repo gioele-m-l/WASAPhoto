@@ -21,7 +21,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	_, err := rt.db.GetUserIDByAuthToken(authToken)
+	thisUser, err := rt.db.GetUserIDByAuthToken(authToken)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("invalid user token")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -41,6 +41,32 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	userDB, err := rt.db.GetUserByUsername(username.Username)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("user not found")
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	// Check ban
+	// Check if the user that made the request isn't blocked by the specified user
+	blocked, err := rt.db.CheckBan(userDB.UserID, thisUser.UserID)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("error in getUserProfile")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if blocked {
+		ctx.Logger.Info("getUserProfile: the user is blocked by the other user")
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	// Check if the user that made the request didn't block the other user
+	blocked, err = rt.db.CheckBan(thisUser.UserID, userDB.UserID)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("error in getUserProfile")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if blocked {
+		ctx.Logger.Info("getUserPhotos: the user blocked the other user")
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
