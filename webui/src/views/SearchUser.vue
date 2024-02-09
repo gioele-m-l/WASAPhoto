@@ -107,7 +107,7 @@ export default {
                     type="text"
                     placeholder="e.g. Maria"
                 />
-                <button type="submit"><svg class="feather"><use href="/feather-sprite-v4.29.0.svg#search"/></svg></button>
+                <button type="submit" title="Search"><svg class="feather"><use href="/feather-sprite-v4.29.0.svg#search"/></svg></button>
             </form>
         </div>
         <ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>

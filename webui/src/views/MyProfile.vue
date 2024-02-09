@@ -230,12 +230,12 @@ export default {
 		<div class="container-fluid">
 			<div class="row">
 				<div id="username-box" class="col d-flex align-items-center justify-content-start">
-					<h4>Username: {{ username }}</h4>
+					<h5>Username: {{ username }}</h5>
 					<button class="btn btn-icon" @click="showButtonModal" v-if="!buttonModal" title="Change username"><svg class="feather"><use href="/feather-sprite-v4.29.0.svg#tool"/></svg></button>
 					<div v-else>
 						<h6>
 							Change username
-							<button class="btn btn-icon" @click="hideButtonModal">&times;</button>
+							<button class="btn btn-icon btn-sm" @click="hideButtonModal">&times;</button>
 						</h6>
 						<div>
 							<form @submit.prevent="setMyUserName">
