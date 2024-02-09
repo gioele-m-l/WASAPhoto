@@ -216,6 +216,10 @@ components:
         comment-id: { $ref: "#/components/schemas/Comment-ID" }
            
         timestamp: { $ref: "#/components/schemas/Timestamp" }
+
+        owner-id: { $ref: "#/components/schemas/User-ID" }
+
+        owner-username: { $ref: "#/components/schemas/Username" }
         
         text: { $ref: "#/components/schemas/Comment-text" }
           

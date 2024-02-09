@@ -94,6 +94,13 @@ func (rt *_router) listComments(w http.ResponseWriter, r *http.Request, ps httpr
 	for _, c := range commentsDB {
 		var comm Comment
 		comm.FromDatabase(c)
+		commentOwner, err := rt.db.GetUserByID(comm.OwnerID)
+		if err != nil {
+			ctx.Logger.WithError(err).Error("listComments: db query error (4)")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		comm.OwnerUsername = commentOwner.Username
 		comments = append(comments, comm)
 	}
 
