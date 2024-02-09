@@ -17,6 +17,7 @@ export default {
             username: this.$route.params.username,
 			profile: {},
 			photos: [],
+			profileImage: null,
 
 			followed: false,
 			banned: false,
@@ -30,12 +31,12 @@ export default {
 			this.followed = false;
 			this.profile = {};
 			this.photos = [];
-			this.getUserProfile(this.username);
+			this.getUserProfile();
 			this.checkBan();
 			if(this.banned != true){
 				this.checkFollow();
 			}
-			this.getUserPhotos(this.username);
+			this.getUserPhotos();
 		},
 
 		async checkBan(){
@@ -92,11 +93,11 @@ export default {
 			this.loading = false;
 		},
 
-		async getUserProfile(username) {
+		async getUserProfile() {
 			this.loading = true;
 			this.errormsg = null;
 			try {
-				let response = await this.$axios.get("/users/" + username + "/", {
+				let response = await this.$axios.get("/users/" + this.username + "/", {
 						headers: {
 							Authorization: this.sessionAuthToken,
 						}
@@ -105,6 +106,7 @@ export default {
 				
 				this.profile = response.data;
 				this.found = true;
+				this.getImageFile();
 			} catch (e) {
 				if (e.response.status == 404){
 					this.found = false;
@@ -116,11 +118,11 @@ export default {
 			this.loading = false;	
 		},
 
-		async getUserPhotos(username){
+		async getUserPhotos(){
 			this.loading = true;
 			this.errormsg = null;
 			try {
-				let response = await this.$axios.get("/users/" + username + "/photos/", {
+				let response = await this.$axios.get("/users/" + this.username + "/photos/", {
 						headers: {
 							Authorization: this.sessionAuthToken,
 						}
@@ -210,6 +212,26 @@ export default {
             }
             this.loading = false;
         },
+
+		async getImageFile(){
+			this.loading = true;
+			this.errormsg = null;
+			try {
+				let response = await this.$axios.get("/images/" + this.profile['profile-image-path'], {
+						headers: {
+							Authorization: this.sessionAuthToken,
+						}
+					}
+				);
+				let ext = response.headers['content-type'].split('/')[1];
+				this.profileImage = 'data:image/'+ext+';base64,'+response.data;
+			} catch(e) {
+				if (e.response.status != 404){
+					this.errormsg = e.toString();
+				}
+			}
+			this.loading = false;
+		},
 		
 	},
 
@@ -236,8 +258,8 @@ export default {
 			<div class="container-fluid">
 				<div class="row">
 							<div class="col">
-						<div v-if="profile['image'] != null">
-							<img :src="profile['image']" alt="Profile image" style="width: 130px; height: 125px; border-radius: 50%; object-fit: cover; border: 1px solid #000;"/>
+						<div v-if="profileImage != null">
+							<img :src="profileImage" alt="Profile image" style="width: 130px; height: 125px; border-radius: 50%; object-fit: cover; border: 1px solid #000;"/>
 						</div>
 						<div v-else>
 							<img src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" style="width: 130px; height: 125px; border-radius: 50%; object-fit: cover; border: 1px solid #000;">
@@ -291,7 +313,7 @@ export default {
 			<hr>
 			<div class="profile-photos">
 				<h3>Photos</h3>
-				<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length!=0" @photoUpdated="refresh"/>
+				<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length > 0" @photoUpdated="refresh"/>
 				<h5 v-else>There are no photos yet :'(</h5>
 			</div>
 		</div>

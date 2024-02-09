@@ -4,7 +4,7 @@ import PhotoCard from '../components/PhotoCard.vue';
 export default {
 	components: {
     PhotoCard,
-},
+	},
 
 	data: function() {
 		return {
@@ -217,7 +217,7 @@ export default {
 						<img src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" style="width: 130px; height: 125px; border-radius: 50%; object-fit: cover; border: 1px solid #000;">
 					</div>
 					<div v-if="!modalProPic">
-						<button @click="showModalProPic" class="btn btn-icon btn-sm"><svg class="feather"><use href="/feather-sprite-v4.29.0.svg#tool"/></svg></button>
+						<button @click="showModalProPic" class="btn btn-icon btn-sm" title="Change profile image"><svg class="feather"><use href="/feather-sprite-v4.29.0.svg#tool"/></svg></button>
 					</div>
 					<div class="upload-propic-box" v-else>
 						<button @click="hideModalProPic" class="btn btn-icon btn-sm">&times;</button>
@@ -234,7 +234,7 @@ export default {
 						</form>
 					</div>
 				</div>
-				<div id="user-stats" class="col">
+				<div id="user-stats" class="col align-items-center">
 					<ul class="list-group list-group-horizontal">
 						<li class="list-group-item text-center w-50">
 							Photos
@@ -289,7 +289,7 @@ export default {
     	<hr>
 		<div class="profile-photos">
 			<h3>Photos</h3>
-    		<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length!=0" @photoUpdated="refresh"/>
+    		<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length>0" @photoUpdated="refresh"/>
 			<div v-else>
 				<h5>There are no photos yet :'(</h5>
 				<!--

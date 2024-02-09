@@ -1,6 +1,11 @@
 <script>
+import UserCard from '../components/UserCard.vue';
 
 export default {
+    components: {
+        UserCard,
+    },
+
 	data: function() {
 		return {
 			errormsg: null,
@@ -41,12 +46,12 @@ export default {
 
                 if (response != null){
                     for(let i = 0; i < response.data.length; i++){
-                        let userSum = {
+                        let user = {
                             userID: response.data[i]['user-id'],
                             username: response.data[i]['username'],
-                            image: this.getImageFile(response.data[i]['profile-image-path'])
+                            imagePath: response.data[i]['profile-image-path'],
                         };
-                        this.userSums.push(userSum);
+                        this.userSums.push(user);
                     }
                 }
 
@@ -57,27 +62,7 @@ export default {
             }
             this.loading = false;
         },
-        async getImageFile(imagePath) {
-                this.loading = true;
-                this.errormsg = null;
-                let image = null;
-                try {
-                    let response = await this.$axios.get("/images/" + imagePath, {
-                            headers: {
-                                Authorization: this.sessionToken,
-                            }
-                        }
-                    );
-                    let ext = response.headers['content-type'].split('/')[1];
-                    image = 'data:image/'+ext+';base64,'+response.data;
-                } catch(e) {
-                    if (!e.response.status == 404){
-                        this.errormsg = e.toString();
-                    }
-                }
-                this.loading = false;
-                return image
-            },
+
 	},
 	mounted() {
 		this.refresh();
@@ -116,28 +101,7 @@ export default {
     <div v-if="search">
         <h4>Users</h4>
         <div id="user-list-box" v-if="userSums.length > 0">
-            <ul>
-                <div class="user-sum-box" v-for="(userSum, index) in userSums" :key="index">
-                    <li>
-                        <RouterLink :to="'/users/' + userSum.username + '/'" class="nav-link" v-if="this.sessionUserID != userSum.userID">
-                            <!--
-                            <img :src="userSum.image" alt="Profile image" class="rounded-circle mb-3" style="width: 30px;" v-if="image != null">
-                            <img v-else src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" class="rounded-circle mb-3" style="width: 30px;">
-                            -->
-                            {{ userSum.username }}
-                        </RouterLink>
-                        <RouterLink v-else to='/my-profile/' class="nav-link">
-                            <!--
-                            <img :src="userSum.image" alt="Profile image" class="rounded-circle mb-3" style="width: 30px;" v-if="image != null">
-                            <img v-else src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" class="rounded-circle mb-3" style="width: 30px;">
-                            -->
-                            {{ userSum.username }}
-                        </RouterLink>
-                    </li>
-                </div>
-                
-            </ul>
-            
+            <UserCard v-for="user in userSums" :key="user.userID" :user="user"></UserCard>
         </div>
         <div v-else>
             <!--
