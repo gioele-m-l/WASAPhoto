@@ -180,7 +180,7 @@ export default {
 									'Access-Control-Allow-Origin': '*'};
 			try{
 				let response = await this.$axios.put("/users/"+this.username+"/profile-image", this.uploadPhotoFile, { headers });
-				this.hideModalPropic();
+				this.hideModalProPic();
 				this.refresh();
 			} catch (e){
 				this.errormsg = e.toString();
