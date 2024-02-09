@@ -21,6 +21,7 @@ export default {
             newUsername: "",
 			uploadPhotoFile: null,
 			image: null,
+			page: 0,
 		}
 	},
 	methods: {
@@ -29,6 +30,7 @@ export default {
 			this.profile = {};
 			this.photos = [];
 			this.newUsername = "";
+			this.page = 0;
 			this.errormsg = null;
 			this.errormsgChUname = null;
 			this.getUserProfile(this.username);
@@ -74,11 +76,19 @@ export default {
 			this.loading = false;	
 		},
 
+		loadMorePhotos(){
+			this.page = this.page+1;
+			this.getUserPhotos();
+		},
+
 		async getUserPhotos(){
 			this.loading = true;
 			this.errormsg = null;
 			try {
 				let response = await this.$axios.get("/users/" + this.username + "/photos/", {
+						params: {
+                        	page: this.page, 
+                    	},
 						headers: {
 							Authorization: this.authToken,
 						}
@@ -206,7 +216,7 @@ export default {
 			</div>
 		</div>
 	</div>
-	<div v-if="!loading">
+	<div>
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col d-flex align-items-center">
@@ -289,7 +299,17 @@ export default {
     	<hr>
 		<div class="profile-photos">
 			<h3>Photos</h3>
-    		<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length>0" @photoUpdated="refresh"/>
+			<div v-if="photos.length>0">
+				<div>
+					<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" @photoUpdated="refresh"/>
+				</div>
+				<div  v-if="profile['photos-count']%20 != 0 && Math.floor(profile['photos-count']/20) != page">
+					<button class="btn btn-outline-secondary" @click="loadMorePhotos">More photos</button>
+				</div>
+				<div v-else>
+					<p>-- End of Feed --</p>
+				</div>
+			</div>
 			<div v-else>
 				<h5>There are no photos yet :'(</h5>
 				<!--

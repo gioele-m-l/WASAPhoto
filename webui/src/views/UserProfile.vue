@@ -18,6 +18,7 @@ export default {
 			profile: {},
 			photos: [],
 			profileImage: null,
+			page: 0,
 
 			followed: false,
 			banned: false,
@@ -31,6 +32,7 @@ export default {
 			this.followed = false;
 			this.profile = {};
 			this.photos = [];
+			this.page = 0;
 			this.getUserProfile();
 			this.checkBan();
 			if(this.banned != true){
@@ -118,11 +120,19 @@ export default {
 			this.loading = false;	
 		},
 
+		loadMorePhotos(){
+			this.page = this.page+1;
+			this.getUserPhotos();
+		},
+
 		async getUserPhotos(){
 			this.loading = true;
 			this.errormsg = null;
 			try {
 				let response = await this.$axios.get("/users/" + this.username + "/photos/", {
+						params: {
+                        	page: this.page, 
+                    	},
 						headers: {
 							Authorization: this.sessionAuthToken,
 						}
@@ -253,8 +263,7 @@ export default {
 				</div>
 			</div>
 		</div>
-		<div class="user-profile" v-if="!loading">
-
+		<div class="user-profile">
 			<div class="container-fluid">
 				<div class="row">
 							<div class="col">
@@ -313,8 +322,23 @@ export default {
 			<hr>
 			<div class="profile-photos">
 				<h3>Photos</h3>
-				<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length > 0" @photoUpdated="refresh"/>
-				<h5 v-else>There are no photos yet :'(</h5>
+				<div v-if="photos.length>0">
+					<div>
+						<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length > 0" @photoUpdated="refresh"/>
+					</div>
+					<div  v-if="profile['photos-count']%20 != 0 && Math.floor(profile['photos-count']/20) != page">
+						<button class="btn btn-outline-secondary" @click="loadMorePhotos">More photos</button>
+					</div>
+					<div v-else>
+						<p>-- End of Feed --</p>
+					</div>
+				</div>
+				<div v-else>
+					<h5>There are no photos yet :'(</h5>
+					<!--
+						<h6>Post something<img src="https://i.redd.it/4s978dxj7xp51.jpg" style="width: 100px; heigth: 100px;"></h6>
+					-->
+				</div>
 			</div>
 		</div>
 	</div>
