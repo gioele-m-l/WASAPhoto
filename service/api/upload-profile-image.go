@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"os"
 
 	"WASAPhoto/service/api/reqcontext"
 
@@ -76,8 +77,18 @@ func (rt *_router) uploadProfileImage(w http.ResponseWriter, r *http.Request, ps
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	// Update the user record to link it to its profile image
 
+	// Remove old profile image if present
+	if userDB.PathToProfileImage != "" {
+		err = os.Remove("/tmp/images/" + userDB.PathToProfileImage)
+		if err != nil {
+			ctx.Logger.WithError(err).Error("error in uploadProfileImage function: cannot remove the image file")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+
+	// Update the user record to link it to its profile image
 	err = rt.db.UpdateProfileImage(userDB.UserID, path)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("error updating db informations")
