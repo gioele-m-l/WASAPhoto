@@ -100,7 +100,7 @@ export default {
     <hr>
     <div v-if="search">
         <h4>Users</h4>
-        <div id="user-list-box" v-if="userSums.length > 0">
+        <div class="w-25" id="user-list-box" v-if="userSums.length > 0">
             <UserCard v-for="user in userSums" :key="user.userID" :user="user"></UserCard>
         </div>
         <div v-else>

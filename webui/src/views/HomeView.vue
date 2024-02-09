@@ -12,12 +12,19 @@ export default {
 			postPhotoModalVisibility: false,
 			postPhotoCaption: "",
 			postPhotoFile: null,
+			page: 0,
         };
     },
     methods: {
 		refresh(){
 			this.errormsg = null;
+			this.page = 0;
 			this.photosStream = [];
+			this.getMyStream();
+		},
+
+		loadMorePhotos(){
+			this.page = this.page+1;
 			this.getMyStream();
 		},
 
@@ -26,6 +33,9 @@ export default {
             this.errormsg = null;
             try {
                 let response = await this.$axios.get("/photos/", {
+					params: {
+                        	page: this.page, 
+                    },
                     headers: {
                         Authorization: this.authToken,
                     }
@@ -41,6 +51,10 @@ export default {
 						let caption = response.data.photos[i]['caption'];
 						let photo = {photoID, ownerID, timestamp, imagePath, likesCount, commentsCount, caption};
 						this.photosStream.push(photo);
+					}
+				} else {
+					if(this.page > 0){
+						this.page = this.page - 1;
 					}
 				}
             }
@@ -160,8 +174,24 @@ export default {
 	</div>
 
 	<div class="stream-photos">
-		<PhotoCard v-for="photo in photosStream" :key="photo.photoID" :photo="photo" v-if="photosStream.length != 0" @photoUpdated="refresh"/>
-		<h5 v-else>There are no photos yet :'(</h5>
+		<div v-if="photosStream.length>0">
+			<div>
+				<PhotoCard v-for="photo in photosStream" :key="photo.photoID" :photo="photo" @photoUpdated="refresh"/>
+			</div>
+			<div  v-if="photosStream.length%20 == 0">
+				<button class="btn btn-outline-secondary" @click="loadMorePhotos">More photos</button>
+			</div>
+			<div v-else>
+				<p>-- End of Feed --</p>
+			</div>
+		</div>
+		<div v-else>
+			<h5>There are no photos yet :'(</h5>
+			<!--
+				<h6>Post something<img src="https://i.redd.it/4s978dxj7xp51.jpg" style="width: 100px; heigth: 100px;"></h6>
+			-->
+		</div>
+
 	</div>
 </template>
 

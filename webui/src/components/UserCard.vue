@@ -47,7 +47,7 @@
 
 <template>
     <div class="row">
-        <div class="col-md-3">
+        <div class="col">
             <div class="card mb-2 shadow-sm w-100">
                 <RouterLink :to="'/users/' + user.username + '/'" class="d-flex justify-content-left flex-wrap flex-sm align-items-center nav-link" v-if="this.sessionUserID != user.userID">
                     <div class="row">

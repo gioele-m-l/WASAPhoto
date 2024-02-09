@@ -1,9 +1,5 @@
 <script>
-import CommentCard from './CommentCard.vue';
     export default {
-        components: {
-            CommentCard,
-        },
         props: ['photo'],
         data: function() {
             return {
