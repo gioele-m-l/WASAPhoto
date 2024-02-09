@@ -1,5 +1,9 @@
 <script>
+import CommentCard from './CommentCard.vue';
     export default {
+        components: {
+            CommentCard,
+        },
         props: ['photo'],
         data: function() {
             return {
@@ -115,6 +119,7 @@
             async listComments(){
                 this.loading = true;
                 this.errormsg = null;
+                this.comments = null;
                 try {
                     let response = await this.$axios.get("/photos/"+this.photo.photoID+"/comments/", {
                         headers : {
@@ -214,9 +219,11 @@
                             <div>
                                 <h6>Comments</h6>
                                 <div v-for="comment in comments" :key="comment['comment-id']">
-                                    <p>
-                                        {{ comment.owner }}: {{ comment.text }}
-                                        <button @click="uncommentPhoto(comment['comment-id'])" v-if="comment.owner == userID" title="Delete comment" class="btn btn-icon btn-sm">&times;</button>
+                                    <p class="d-flex justify-content-left flex-wrap flex-sm align-items-center">
+                                        <RouterLink :to="'/users/'+comment['owner-username']+'/'" v-if="comment['owner-id'] != userID" class="nav-link">{{ comment['owner-username'] }}</RouterLink>
+                                        <RouterLink to="/my-profile/" v-else class="nav-link">{{ comment['owner-username'] }}</RouterLink>
+                                        : {{ comment.text }}
+                                        <button @click="uncommentPhoto(comment['comment-id'])" v-if="comment['owner-id'] == userID" title="Delete comment" class="btn btn-icon btn-sm">&times;</button>
                                     </p>
                                     
                                 </div>
