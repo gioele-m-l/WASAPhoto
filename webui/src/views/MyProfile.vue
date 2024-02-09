@@ -180,6 +180,7 @@ export default {
 									'Access-Control-Allow-Origin': '*'};
 			try{
 				let response = await this.$axios.put("/users/"+this.username+"/profile-image", this.uploadPhotoFile, { headers });
+				this.hideModalPropic();
 				this.refresh();
 			} catch (e){
 				this.errormsg = e.toString();
@@ -206,52 +207,33 @@ export default {
 		</div>
 	</div>
 	<div v-if="!loading">
-		<!--
-		<div class="profile-image">
-			<img :src="image" alt="Profile image" class="rounded-circle mb-3" style="width: 150px;" v-if="image != null"/>
-			<img v-else src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" class="rounded-circle mb-3" style="width: 1500px;">
-			<button @click="showModalProPic"><svg class="feather"><use href="/feather-sprite-v4.29.0.svg#tool"/></svg></button>
-			<div class="upload-propic-box" v-if="modalProPic">
-				<button @click="hideModalProPic">&times;</button>
-				<form @submit.prevent="uploadProfileImage">
-					<label for="uploadProfileImage">Select a profile image</label>
-					<input
-						id="uploadProfileImage"
-						@change="uploadFile"
-						type="file"
-						ref="file"
-						accept = ".png, .jpg, .jpeg"
-					>
-					<button type="submit">Upload</button>
-				</form>
-			</div>
-		</div>
-		-->
 		<div class="container-fluid">
 			<div class="row">
-				<div id="username-box" class="col d-flex align-items-center justify-content-start">
-					<h5>Username: {{ username }}</h5>
-					<button class="btn btn-icon" @click="showButtonModal" v-if="!buttonModal" title="Change username"><svg class="feather"><use href="/feather-sprite-v4.29.0.svg#tool"/></svg></button>
-					<div v-else>
-						<h6>
-							Change username
-							<button class="btn btn-icon btn-sm" @click="hideButtonModal">&times;</button>
-						</h6>
-						<div>
-							<form @submit.prevent="setMyUserName">
-								<label for="newUsername">New Username</label>
-								<br>
-								<input
-									id="newUsername"
-									v-model="newUsername"
-								/>
-								<button class="btn btn-sm btn-primary" type="submit">Confirm</button>
-							</form>
-						</div>
+				<div class="col d-flex align-items-center">
+					<div v-if="image != null">
+					<img :src="image" alt="Profile image" style="width: 130px; height: 125px; border-radius: 50%; object-fit: cover; border: 1px solid #000;"/>
 					</div>
-					<ErrorMsg v-if="errormsgChUname" :msg="errormsgChUname"></ErrorMsg>
+					<div v-else>
+						<img src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" style="width: 130px; height: 125px; border-radius: 50%; object-fit: cover; border: 1px solid #000;">
+					</div>
+					<div v-if="!modalProPic">
+						<button @click="showModalProPic" class="btn btn-icon btn-sm"><svg class="feather"><use href="/feather-sprite-v4.29.0.svg#tool"/></svg></button>
+					</div>
+					<div class="upload-propic-box" v-else>
+						<button @click="hideModalProPic" class="btn btn-icon btn-sm">&times;</button>
+						<form @submit.prevent="uploadProfileImage">
+							<label for="uploadProfileImage">Select a profile image</label>
+							<input
+								id="uploadProfileImage"
+								@change="uploadFile"
+								type="file"
+								ref="file"
+								accept = ".png, .jpg, .jpeg"
+							>
+							<button type="submit">Upload</button>
+						</form>
+					</div>
 				</div>
-
 				<div id="user-stats" class="col">
 					<ul class="list-group list-group-horizontal">
 						<li class="list-group-item text-center w-50">
@@ -272,6 +254,35 @@ export default {
 					</ul>
 				</div>
 				<div class="col"></div>
+			</div>
+		</div>
+		<br>
+		<div class="container-fluid">
+			<div class="row">
+				<div id="username-box" class="col d-flex align-items-center">
+					<h5>Username: {{ username }}</h5>
+					<div v-if="!buttonModal">
+						<button class="btn btn-icon btn-sm" @click="showButtonModal" title="Change username"><svg class="feather"><use href="/feather-sprite-v4.29.0.svg#tool"/></svg></button>
+					</div>
+					<div v-else>
+						<h6>
+							Change username
+							<button class="btn btn-icon btn-sm" @click="hideButtonModal">&times;</button>
+						</h6>
+						<div>
+							<form @submit.prevent="setMyUserName">
+								<label for="newUsername">New Username</label>
+								<br>
+								<input
+									id="newUsername"
+									v-model="newUsername"
+								/>
+								<button class="btn btn-sm btn-primary" type="submit">Confirm</button>
+							</form>
+						</div>
+					</div>
+					<ErrorMsg v-if="errormsgChUname" :msg="errormsgChUname"></ErrorMsg>
+				</div>
 			</div>
 		</div>
 
