@@ -241,12 +241,20 @@ export default {
 				<div class="row">
 					<div id="username-box" class="col d-flex align-items-center justify-content-start">
 						<div class="user-profile-follow-unfollow" v-if="!banned">
-							<button class="btn btn-primary btn-block" @click="followUser" v-if="!followed">Follow</button>
-							<button class="btn btn-secondary btn-block" @click="unfollowUser" v-else>Unfollow</button>
+							<div v-if="!followed">
+								<button class="btn btn-primary btn-block" @click="followUser">Follow</button>
+							</div>
+							<div v-else>
+								<button class="btn btn-secondary btn-block" @click="unfollowUser">Unfollow</button>
+							</div>
 						</div>
 						<div class="user-profile-ban-unban">
-							<button class="btn btn-danger btn-block" @click="banUser" v-if="!banned">Ban</button>
-							<button class="btn btn-secondary btn-block" @click="unbanUser" v-else>Unban</button>
+							<div v-if="!banned">
+								<button class="btn btn-danger btn-block" @click="banUser">Ban</button>
+							</div>
+							<div v-else>
+								<button class="btn btn-secondary btn-block" @click="unbanUser">Unban</button>
+							</div>
 						</div>
 					</div>
 					<div id="user-stats" class="col">
