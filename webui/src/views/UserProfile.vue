@@ -17,6 +17,7 @@ export default {
             username: this.$route.params.username,
 			profile: {},
 			photos: [],
+			profileImage: null,
 
 			followed: false,
 			banned: false,
@@ -30,12 +31,12 @@ export default {
 			this.followed = false;
 			this.profile = {};
 			this.photos = [];
-			this.getUserProfile(this.username);
+			this.getUserProfile();
 			this.checkBan();
 			if(this.banned != true){
 				this.checkFollow();
 			}
-			this.getUserPhotos(this.username);
+			this.getUserPhotos();
 		},
 
 		async checkBan(){
@@ -92,11 +93,11 @@ export default {
 			this.loading = false;
 		},
 
-		async getUserProfile(username) {
+		async getUserProfile() {
 			this.loading = true;
 			this.errormsg = null;
 			try {
-				let response = await this.$axios.get("/users/" + username + "/", {
+				let response = await this.$axios.get("/users/" + this.username + "/", {
 						headers: {
 							Authorization: this.sessionAuthToken,
 						}
@@ -105,6 +106,7 @@ export default {
 				
 				this.profile = response.data;
 				this.found = true;
+				this.getImageFile();
 			} catch (e) {
 				if (e.response.status == 404){
 					this.found = false;
@@ -116,11 +118,11 @@ export default {
 			this.loading = false;	
 		},
 
-		async getUserPhotos(username){
+		async getUserPhotos(){
 			this.loading = true;
 			this.errormsg = null;
 			try {
-				let response = await this.$axios.get("/users/" + username + "/photos/", {
+				let response = await this.$axios.get("/users/" + this.username + "/photos/", {
 						headers: {
 							Authorization: this.sessionAuthToken,
 						}
@@ -210,6 +212,26 @@ export default {
             }
             this.loading = false;
         },
+
+		async getImageFile(){
+			this.loading = true;
+			this.errormsg = null;
+			try {
+				let response = await this.$axios.get("/images/" + this.profile['profile-image-path'], {
+						headers: {
+							Authorization: this.sessionAuthToken,
+						}
+					}
+				);
+				let ext = response.headers['content-type'].split('/')[1];
+				this.profileImage = 'data:image/'+ext+';base64,'+response.data;
+			} catch(e) {
+				if (e.response.status != 404){
+					this.errormsg = e.toString();
+				}
+			}
+			this.loading = false;
+		},
 		
 	},
 
@@ -232,29 +254,15 @@ export default {
 			</div>
 		</div>
 		<div class="user-profile" v-if="!loading">
-			<!--
-			<div class="profile-image">
-				<img :src="profile['profile-image-path']" alt="Profile image"/>
-			</div>
-			-->
+
 			<div class="container-fluid">
 				<div class="row">
-					<div id="username-box" class="col d-flex align-items-center justify-content-start">
-						<div class="user-profile-follow-unfollow" v-if="!banned">
-							<div v-if="!followed">
-								<button class="btn btn-primary btn-block" @click="followUser">Follow</button>
-							</div>
-							<div v-else>
-								<button class="btn btn-secondary btn-block" @click="unfollowUser">Unfollow</button>
-							</div>
+							<div class="col">
+						<div v-if="profileImage != null">
+							<img :src="profileImage" alt="Profile image" style="width: 130px; height: 125px; border-radius: 50%; object-fit: cover; border: 1px solid #000;"/>
 						</div>
-						<div class="user-profile-ban-unban">
-							<div v-if="!banned">
-								<button class="btn btn-danger btn-block" @click="banUser">Ban</button>
-							</div>
-							<div v-else>
-								<button class="btn btn-secondary btn-block" @click="unbanUser">Unban</button>
-							</div>
+						<div v-else>
+							<img src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" style="width: 130px; height: 125px; border-radius: 50%; object-fit: cover; border: 1px solid #000;">
 						</div>
 					</div>
 					<div id="user-stats" class="col">
@@ -279,10 +287,33 @@ export default {
 					<div class="col"></div>
 				</div>
 			</div>
+			<br>
+			<div class="container-fluid">
+				<div class="row">
+					<div id="username-box" class="col d-flex align-items-center">
+						<div class="user-profile-follow-unfollow" v-if="!banned">
+							<div v-if="!followed">
+								<button class="btn btn-primary btn-block" @click="followUser">Follow</button>
+							</div>
+							<div v-else>
+								<button class="btn btn-secondary btn-block" @click="unfollowUser">Unfollow</button>
+							</div>
+						</div>
+						<div class="user-profile-ban-unban">
+							<div v-if="!banned">
+								<button class="btn btn-danger btn-block" @click="banUser">Ban</button>
+							</div>
+							<div v-else>
+								<button class="btn btn-secondary btn-block" @click="unbanUser">Unban</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 			<hr>
 			<div class="profile-photos">
 				<h3>Photos</h3>
-				<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length!=0" @photoUpdated="refresh"/>
+				<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length > 0" @photoUpdated="refresh"/>
 				<h5 v-else>There are no photos yet :'(</h5>
 			</div>
 		</div>
