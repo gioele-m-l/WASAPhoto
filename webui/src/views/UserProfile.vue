@@ -371,12 +371,12 @@ export default {
 									<li class="list-group-item text-center w-50"  @click="showFollowers">
 										Followers
 										<br>
-										{{ profile['followers-count'] }}
+										{{ followers.length }}
 									</li>
 									<li class="list-group-item text-center w-50"  @click="showFollowing">
 										Following
 										<br>
-										{{ profile['followings-count'] }}
+										{{ following.length }}
 									</li>
 								</ul>
 							</div>
