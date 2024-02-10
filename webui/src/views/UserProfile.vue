@@ -45,6 +45,7 @@ export default {
 			this.page = 0;
 			this.followers = [];
 			this.following = [];
+			this.errormsg = null;
 
 			this.getUserProfile();
 			this.checkBan();
@@ -156,13 +157,14 @@ export default {
 				if (response.data != null){
 					for(let i=0; i<response.data.length; i++){
 						let photoID = response.data[i]['photo-id'];
-						let ownerID = response.data[i]['owner'];
+						let ownerID = response.data[i]['owner-id'];
+						let ownerUsername = response.data[i]['owner-username'];
 						let timestamp = response.data[i]['timestamp'];
 						let imagePath = response.data[i]['image-path'];
 						let likesCount = response.data[i]['likes-count'];
 						let commentsCount = response.data[i]['comments-count'];
 						let caption = response.data[i]['caption'];
-						let photo = {photoID, ownerID, timestamp, imagePath, likesCount, commentsCount, caption};
+						let photo = {photoID, ownerID, ownerUsername, timestamp, imagePath, likesCount, commentsCount, caption};
 						this.photos.push(photo);
 					}
 				}

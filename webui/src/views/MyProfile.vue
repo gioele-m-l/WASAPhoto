@@ -48,10 +48,10 @@ export default {
 			this.errormsg = null;
 			this.errormsgChUname = null;
 			this.showSidebar = false;
+			this.getUserProfile();
 			this.listBanned();
 			this.listFollowers();
 			this.listFollowing();
-			this.getUserProfile();
 			this.getUserPhotos();
 		},
 

@@ -60,6 +60,13 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 		var photo Photo
 		photo.FromDatabase(p)
 
+		user, err := rt.db.GetUserByID(photo.Owner)
+		if err != nil {
+			ctx.Logger.WithError(err).Error("error in getMyStream function: error retrieving user using photoID.owner")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
 		comments, err := rt.db.GetCommentsByPhotoID(p.PhotoID)
 		if err != nil {
 			ctx.Logger.WithError(err).Error("error in getMyStream function: error retrieving comments using photoID")
@@ -72,6 +79,7 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		photo.Username = user.Username
 		photo.CommentsCount = len(comments)
 		photo.LikesCount = len(likes)
 

@@ -43,13 +43,14 @@ export default {
 				if (response.data.photos != null){
 					for(let i=0; i<response.data.photos.length; i++){
 						let photoID = response.data.photos[i]['photo-id'];
-						let ownerID = response.data.photos[i]['owner'];
+						let ownerID = response.data.photos[i]['owner-id'];
+						let ownerUsername = response.data.photos[i]['owner-username'];
 						let timestamp = response.data.photos[i]['timestamp'];
 						let imagePath = response.data.photos[i]['image-path'];
 						let likesCount = response.data.photos[i]['likes-count'];
 						let commentsCount = response.data.photos[i]['comments-count'];
 						let caption = response.data.photos[i]['caption'];
-						let photo = {photoID, ownerID, timestamp, imagePath, likesCount, commentsCount, caption};
+						let photo = {photoID, ownerID, ownerUsername, timestamp, imagePath, likesCount, commentsCount, caption};
 						this.photosStream.push(photo);
 					}
 				} else {
