@@ -1,180 +1,207 @@
 <script>
+import UserCard from './UserCard.vue';
+
     export default {
-        props: ['photo'],
-        data: function() {
-            return {
-                errormsg: null,
-                loading: false,
-                username: sessionStorage.getItem("username"),
-                authToken: sessionStorage.getItem("auth-token"),
-                userID: sessionStorage.getItem("user-id"),
-                image: "",
-                liked: false,
-                showComments: false,
-                comments: null,
-                newComment: "",
+    props: ['photo'],
+    data: function () {
+        return {
+            errormsg: null,
+            loading: false,
+            username: sessionStorage.getItem("username"),
+            authToken: sessionStorage.getItem("auth-token"),
+            userID: sessionStorage.getItem("user-id"),
+            image: "",
+            liked: false,
+            showComments: false,
+            comments: null,
+            newComment: "",
+            user: null,
+        };
+    },
+    methods: {
+        refresh() {
+            this.listComments();
+            this.getPhotoLike();
+        },
+        async getImageFile() {
+            this.loading = true;
+            this.errormsg = null;
+            try {
+                let response = await this.$axios.get("/images/" + this.photo.imagePath, {
+                    headers: {
+                        Authorization: this.authToken,
+                    }
+                });
+                let ext = response.headers['content-type'].split('/')[1];
+                this.image = 'data:image/' + ext + ';base64,' + response.data;
             }
+            catch (e) {
+                this.errormsg = e.toString;
+            }
+            this.loading = false;
         },
-
-        methods: {
-
-            refresh(){
-                this.listComments();
-                this.getPhotoLike();
-            },
-
-            async getImageFile() {
-                this.loading = true;
-                this.errormsg = null;
-                try {
-                    let response = await this.$axios.get("/images/" + this.photo.imagePath, {
-                            headers: {
-                                Authorization: this.authToken,
-                            }
-                        }
-                    );
-                    let ext = response.headers['content-type'].split('/')[1];
-                    this.image = 'data:image/'+ext+';base64,'+response.data;
-                } catch(e) {
-                    this.errormsg = e.toString;
-                }
-                this.loading = false;
-            },
-
-            async likePhoto() {
-                this.loading = true;
-                this.errormsg = null;
-                try {
-                    await this.$axios.put("/photos/" + this.photo.photoID + "/likes/" + this.userID, null, {
-                            headers: {
-                                Authorization: this.authToken,
-                            }
-                        }
-                    );
-                    this.$emit('photoUpdated');
-                } catch (e) {
-                    this.errormsg = e.toString();
-                }
-                this.loading = false;
-            },
-            
-            async unlikePhoto() {
-                this.loading = true;
-                this.errormsg = null;
-                try {
-                    await this.$axios.delete("/photos/"+this.photo.photoID+"/likes/"+this.userID,{
-                        headers: {
-                            Authorization: this.authToken,
-                        }
-                    });
-                    this.$emit('photoUpdated');
-                } catch (e) {
-                    this.errormsg = e.toString();
-                }
-                this.loading = false;
-            },
-            
-            async deletePhoto(){
-                this.loading = true;
-                this.errormsg = false;
-                try {
-                    let response = await this.$axios.delete("/photos/" + this.photo.photoID + "/", {
-                        headers : {
-                            Authorization: this.authToken
-                        }
-                    })
-                    this.$emit('photoUpdated');
-                } catch (e) {
-                    this.errormsg = e.toString();
-                }
-                this.loading = false;
-            },
-
-            async getPhotoLike(){
-                this.loading = true;
-                this.errormsg = null;
-                try {
-                    let response = await this.$axios.get("/photos/"+this.photo.photoID+"/likes/"+this.userID, {
-                        headers : {
-                            Authorization: this.authToken,
-                        }
-                    })
-                    if(response != null){
-                        this.liked = true;
+        async likePhoto() {
+            this.loading = true;
+            this.errormsg = null;
+            try {
+                await this.$axios.put("/photos/" + this.photo.photoID + "/likes/" + this.userID, null, {
+                    headers: {
+                        Authorization: this.authToken,
                     }
-                } catch (e) {
-                    if(e.response.status == 404){
-                        this.liked = false;
-                    } else {
-                        this.errormsg = e.toString();
+                });
+                this.$emit('photoUpdated');
+            }
+            catch (e) {
+                this.errormsg = e.toString();
+            }
+            this.loading = false;
+        },
+        async unlikePhoto() {
+            this.loading = true;
+            this.errormsg = null;
+            try {
+                await this.$axios.delete("/photos/" + this.photo.photoID + "/likes/" + this.userID, {
+                    headers: {
+                        Authorization: this.authToken,
                     }
+                });
+                this.$emit('photoUpdated');
+            }
+            catch (e) {
+                this.errormsg = e.toString();
+            }
+            this.loading = false;
+        },
+        async deletePhoto() {
+            this.loading = true;
+            this.errormsg = false;
+            try {
+                let response = await this.$axios.delete("/photos/" + this.photo.photoID + "/", {
+                    headers: {
+                        Authorization: this.authToken
+                    }
+                });
+                this.$emit('photoUpdated');
+            }
+            catch (e) {
+                this.errormsg = e.toString();
+            }
+            this.loading = false;
+        },
+        async getPhotoLike() {
+            this.loading = true;
+            this.errormsg = null;
+            try {
+                let response = await this.$axios.get("/photos/" + this.photo.photoID + "/likes/" + this.userID, {
+                    headers: {
+                        Authorization: this.authToken,
+                    }
+                });
+                if (response != null) {
+                    this.liked = true;
                 }
-                this.loading = false;
-            },
-
-            async listComments(){
-                this.loading = true;
-                this.errormsg = null;
-                this.comments = null;
-                try {
-                    let response = await this.$axios.get("/photos/"+this.photo.photoID+"/comments/", {
-                        headers : {
-                            Authorization: this.authToken,
-                        }
-                    })
-                    this.comments = response.data;
-                } catch (e) {
+            }
+            catch (e) {
+                if (e.response.status == 404) {
+                    this.liked = false;
+                }
+                else {
                     this.errormsg = e.toString();
                 }
+            }
+            this.loading = false;
+        },
+        async listComments() {
+            this.loading = true;
+            this.errormsg = null;
+            this.comments = null;
+            try {
+                let response = await this.$axios.get("/photos/" + this.photo.photoID + "/comments/", {
+                    headers: {
+                        Authorization: this.authToken,
+                    }
+                });
+                this.comments = response.data;
+            }
+            catch (e) {
+                this.errormsg = e.toString();
+            }
+            this.loading = false;
+        },
+        async commentPhoto() {
+            this.loading = true;
+            this.errormsg = null;
+            if (this.newComment.length <= 0) {
+                this.errormsg = "The comment can not be empty";
+                this.newComment = "";
                 this.loading = false;
-            },
+                return;
+            }
+            try {
+                let response = await this.$axios.post("/photos/" + this.photo.photoID + "/comments/", { "text": this.newComment }, {
+                    headers: {
+                        Authorization: this.authToken,
+                    }
+                });
+                this.newComment = "";
+                this.$emit('photoUpdated');
+            }
+            catch (e) {
+                this.errormsg = e.toString();
+            }
+            this.loading = false;
+        },
+        async uncommentPhoto(commentID) {
+            this.loading = true;
+            this.errormsg = null;
+            try {
+                let response = await this.$axios.delete("/photos/" + this.photo.photoID + "/comments/" + commentID, {
+                    headers: {
+                        Authorization: this.authToken,
+                    }
+                });
+                this.$emit('photoUpdated');
+            }
+            catch (e) {
+                this.errormsg = e.toString();
+            }
+            this.loading = false;
+        },
+        
+        async getUserProfile(){
+            this.loading = true;
+            this.errormsg = null;
 
-            async commentPhoto(){
-                this.loading = true;
-                this.errormsg = null;
-                if(this.newComment.length <= 0){
-                    this.errormsg = "The comment can not be empty"
-                    this.newComment = "";
-                    this.loading = false
-                    return;
-                }
-                try {
-                    let response = await this.$axios.post("/photos/"+this.photo.photoID+"/comments/", {"text":this.newComment}, {
-                        headers : {
-                            Authorization: this.authToken,
-                        }
-                    })
-                    this.newComment = "";
-                    this.$emit('photoUpdated');
-                } catch (e) {
-                    this.errormsg = e.toString();
-                }
-                this.loading = false;
-            },
+            try {
+                let response = await this.$axios.get("/users/"+this.photo.ownerUsername+"/", {
+                    headers: {
+                        Authorization: this.authToken,
+                    }
+                })
 
-            async uncommentPhoto(commentID){
-                this.loading = true;
-                this.errormsg = null;
-                try {
-                    let response = await this.$axios.delete("/photos/"+this.photo.photoID+"/comments/"+commentID, {
-                        headers : {
-                            Authorization: this.authToken,
-                        }
-                    })
-                    this.$emit('photoUpdated');
-                } catch (e) {
-                    this.errormsg = e.toString();
+                if(response != null){
+                    this.user = {
+                        userID: this.photo.ownerID,
+                        username: this.photo.ownerUsername,
+                        imagePath: response.data['profile-image-path']
+                    }
+                        
                 }
-                this.loading = false;
-            },
+
+            } catch(e) {
+                this.errormsg = e.toString();
+            }
+            this.loading = false;
 
         },
-
-        mounted() {
-            this.getImageFile();
-            this.refresh();
-        }
-    }
+    },
+    mounted() {
+        this.getUserProfile();
+        this.getImageFile();
+        this.refresh();
+    },
+    components: { UserCard }
+}
 </script>
 
 <template>
@@ -182,8 +209,8 @@
             <div class="col-md-3">
                 <div class="card mb-3 shadow-sm">
                     <div class="card-header">
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <h4>{{ photo.ownerUsername }}</h4>
+                        <div class="d-flex justify-content-between mt-2 align-items-center" v-if="user != null">
+                            <UserCard :user="user"></UserCard>
                             <button @click="deletePhoto" v-if="photo.ownerID == userID" class="btn btn-outline-primary btn-sm">&times;</button>
                         </div>
                     </div>
