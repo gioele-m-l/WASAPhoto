@@ -198,12 +198,12 @@ func (db *appdbimpl) ListFollowers(username string, userID int) ([]User, error) 
 	rows, err := db.c.Query(`SELECT Users.* FROM Users INNER JOIN Followers ON Users.userID = Followers.followerID 
 							LEFT JOIN Blocked_users ON Users.userID = Blocked_users.blockerID AND Blocked_users.blockedID = ?
 							WHERE Followers.followedID = (SELECT userID FROM Users WHERE username = ?) 
-							AND Blocked_users.blockedID IS NULL;`, userID, username)
+							AND Blocked_users.blockedID IS NULL`, userID, username)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	for rows.Next() {
 		var u User
 		err := rows.Scan(&u.UserID, &u.Username, &u.PathToProfileImage)
@@ -221,9 +221,12 @@ func (db *appdbimpl) ListFollowers(username string, userID int) ([]User, error) 
 }
 
 // List followings given a username
-func (db *appdbimpl) ListFollowings(username string) ([]User, error) {
+func (db *appdbimpl) ListFollowings(username string, userID int) ([]User, error) {
 	var users []User
-	rows, err := db.c.Query(`SELECT Users.* FROM Users INNER JOIN Followers ON Users.userID = Followers.followedID WHERE Followers.followerID = (SELECT userID FROM Users WHERE username = ?)`, username)
+	rows, err := db.c.Query(`SELECT Users.* FROM Users INNER JOIN Followers ON Users.userID = Followers.followedID
+							LEFT JOIN Blocked_users ON Users.userID = Blocked_users.blockerID AND Blocked_users.blockedID = ?
+							WHERE Followers.followerID = (SELECT userID FROM Users WHERE username = ?)
+							AND Blocked_users.blockedID IS NULL`, userID, username)
 	if err != nil {
 		return nil, err
 	}

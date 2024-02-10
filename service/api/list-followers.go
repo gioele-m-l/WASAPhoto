@@ -25,15 +25,28 @@ func (rt *_router) listFollowers(w http.ResponseWriter, r *http.Request, ps http
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	_, err = rt.db.GetUserByUsername(username)
+	user, err := rt.db.GetUserByUsername(username)
 	if err != nil {
-		ctx.Logger.WithError(err).Error("listBanned: error retrieving the user with username")
+		ctx.Logger.WithError(err).Error("listFollowers: error retrieving the user with username")
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	// Check if the user banned the user who made the request
+	blocked, err := rt.db.CheckBan(user.UserID, userTok.UserID)
+	if err != nil {
+		ctx.Logger.WithError(err).Error("listFollowers: db query error (2)")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if blocked {
+		ctx.Logger.Info("listFollowers: the user is blocked by the other user")
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	var dbUsers []database.User
-	
+
 	dbUsers, err = rt.db.ListFollowers(username, userTok.UserID)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("listFollowers: cannot retrieve users from db")
