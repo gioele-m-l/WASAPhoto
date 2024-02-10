@@ -2,6 +2,7 @@
 import UserCard from './UserCard.vue';
 
     export default {
+    emits: ['photoUpdated'],
     props: ['photo'],
     data: function () {
         return {
