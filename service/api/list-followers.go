@@ -11,7 +11,7 @@ import (
 
 func (rt *_router) listFollowers(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	// Check if there's an authorization token and if it's valid
-	_, err := CheckAuthentication(rt, r)
+	userTok, err := CheckAuthentication(rt, r)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("listFollowers: missing or invalid authorization token")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -33,7 +33,8 @@ func (rt *_router) listFollowers(w http.ResponseWriter, r *http.Request, ps http
 	}
 
 	var dbUsers []database.User
-	dbUsers, err = rt.db.ListFollowers(username)
+	
+	dbUsers, err = rt.db.ListFollowers(username, userTok.UserID)
 	if err != nil {
 		ctx.Logger.WithError(err).Error("listFollowers: cannot retrieve users from db")
 		w.WriteHeader(http.StatusInternalServerError)
