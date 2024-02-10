@@ -7,6 +7,13 @@ export default {
 		PhotoCard,
 		UserCard,
 	},
+	
+	watch: {
+    	'$route.params.username': function(newUsername, oldUsername) {
+			this.username = newUsername;
+      		this.refresh();
+		}
+    },
 
 	data: function() {
 		return {
