@@ -455,7 +455,7 @@ export default {
 		</div>
 	</div>
 		
-	<div v-else>
+	<div v-else-if="!loading">
 		<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 			<h1 class="h2">Error 404: user "{{ username }}" was not found...</h1>
 			<div class="btn-toolbar mb-2 mb-md-0">
