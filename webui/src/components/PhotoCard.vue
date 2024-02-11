@@ -137,6 +137,11 @@ import UserCard from './UserCard.vue';
                 this.newComment = "";
                 this.loading = false;
                 return;
+            } else if (this.newComment.length > 256) {
+                this.errormsg = "The comment must be maximum 256 characters long";
+                this.newComment = "";
+                this.loading = false;
+                return;
             }
             try {
                 let response = await this.$axios.post("/photos/" + this.photo.photoID + "/comments/", { "text": this.newComment }, {
@@ -210,7 +215,7 @@ import UserCard from './UserCard.vue';
             <div class="col-md-3">
                 <div class="card mb-3 shadow-sm">
                     <div class="card-header">
-                        <div class="d-flex justify-content-between mt-2 align-items-center" v-if="user != null">
+                        <div v-if="user != null" class="d-flex justify-content-between mt-2 align-items-center">
                             <UserCard :user="user"></UserCard>
                             <div v-if="photo.ownerID == userID">
                                 <button @click="deletePhoto" class="btn btn-outline-primary btn-sm">&times;</button>
@@ -244,14 +249,20 @@ import UserCard from './UserCard.vue';
                             <hr>
                             <div>
                                 <h6>Comments</h6>
-                                <div v-for="comment in comments" :key="comment['comment-id']">
-                                    <p class="d-flex justify-content-left flex-wrap flex-sm align-items-center">
-                                        <RouterLink :to="'/users/'+comment['owner-username']+'/'" v-if="comment['owner-id'] != userID" class="nav-link">{{ comment['owner-username'] }}</RouterLink>
-                                        <RouterLink to="/my-profile/" v-else class="nav-link">{{ comment['owner-username'] }}</RouterLink>
-                                        : {{ comment.text }}
-                                        <button @click="uncommentPhoto(comment['comment-id'])" v-if="comment['owner-id'] == userID" title="Delete comment" class="btn btn-icon btn-sm">&times;</button>
-                                    </p>
-                                    
+                                <div v-for="comment in comments" :key="comment['comment-id']" class="border-bottom">
+                                    <div class="d-flex justify-content-between flex-wrap flex-sm align-items-center">
+                                        <div class="d-flex flex-wrap flex-sm align-items-center">
+                                            <RouterLink v-if="comment['owner-id'] != userID" :to="'/users/'+comment['owner-username']+'/'"  class="nav-link">{{ comment['owner-username'] }}</RouterLink>
+                                            <RouterLink v-else to="/my-profile/" class="nav-link">{{ comment['owner-username'] }}</RouterLink>
+                                            :
+                                        </div>
+                                        <div v-if="comment['owner-id'] == userID">
+                                            <button @click="uncommentPhoto(comment['comment-id'])" title="Delete comment" class="btn btn-icon btn-sm">&times;</button>
+                                        </div>
+                                    </div>
+                                    <div style="white-space: pre-wrap;">
+                                        {{ comment.text }}
+                                    </div>
                                 </div>
                             </div>
                             <div>

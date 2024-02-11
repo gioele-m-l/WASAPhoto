@@ -433,7 +433,7 @@ export default {
 					<div>
 						<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" @photoUpdated="refresh"/>
 					</div>
-					<div  v-if="profile['photos-count']%20 != 0 && Math.floor(profile['photos-count']/20) != page">
+					<div v-if="profile['photos-count']%20 != 0 && Math.floor(profile['photos-count']/20) != page">
 						<button class="btn btn-outline-secondary" @click="loadMorePhotos">More photos</button>
 					</div>
 					<div v-else>
@@ -448,22 +448,22 @@ export default {
 				</div>
 			</div>
 		</div>
-		<div class="col-4 border" v-if="showBannedVar || showFollowersVar || showFollowingVar">
+		<div v-if="showBannedVar || showFollowersVar || showFollowingVar" class="col-4 border">
 			<div v-if="showFollowersVar">
 				<h3 class="d-flex border-bottom justify-content-between">Followers<button @click="hideSideBar" class="btn btn-icon btn-sm">&times;</button></h3>
-				<div class="w-75" v-if="followers.length > 0">
+				<div v-if="followers.length > 0" class="w-75">
 					<UserCard v-for="user in followers" :key="user.userID" :user="user"></UserCard>
 				</div>
 			</div>
 			<div v-else-if="showFollowingVar">
 				<h3 class="d-flex border-bottom justify-content-between">Following<button @click="hideSideBar" class="btn btn-icon btn-sm">&times;</button></h3>
-				<div class="w-75" v-if="following.length > 0">
+				<div v-if="following.length > 0" class="w-75">
 					<UserCard v-for="user in following" :key="user.userID" :user="user"></UserCard>
 				</div>
 			</div>
 			<div v-else-if="showBannedVar">
 				<h3 class="d-flex border-bottom justify-content-between">Banned<button @click="hideSideBar" class="btn btn-icon btn-sm">&times;</button></h3>
-				<div class="w-75" v-if="banned.length > 0">
+				<div  v-if="banned.length > 0" class="w-75">
 					<UserCard v-for="user in banned" :key="user.userID" :user="user"></UserCard>
 				</div>
 			</div>	

@@ -396,7 +396,7 @@ export default {
 					<div class="container-fluid">
 						<div class="row">
 							<div id="username-box" class="col d-flex align-items-center">
-								<div class="user-profile-follow-unfollow" v-if="!banned">
+								<div  v-if="!banned" class="user-profile-follow-unfollow">
 									<div v-if="!followed">
 										<button class="btn btn-primary btn-block" @click="followUser">Follow</button>
 									</div>
@@ -420,7 +420,7 @@ export default {
 						<h3>Photos</h3>
 						<div v-if="photos.length>0">
 							<div>
-								<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" v-if="photos.length > 0" @photoUpdated="refresh"/>
+								<PhotoCard v-if="photos.length > 0" v-for="photo in photos" :key="photo.photoID" :photo="photo" @photoUpdated="refresh"/>
 							</div>
 							<div  v-if="profile['photos-count']%20 != 0 && Math.floor(profile['photos-count']/20) != page">
 								<button class="btn btn-outline-secondary" @click="loadMorePhotos">More photos</button>
@@ -438,16 +438,16 @@ export default {
 					</div>
 				</div>
 			</div>
-			<div class="col-4 border" v-if="showFollowersVar || showFollowingVar">
+			<div  v-if="showFollowersVar || showFollowingVar" class="col-4 border">
 				<div v-if="showFollowersVar">
 					<h3 class="d-flex border-bottom justify-content-between">Followers<button @click="hideSideBar" class="btn btn-icon btn-sm">&times;</button></h3>
-					<div class="w-75" v-if="followers.length > 0">
+					<div v-if="followers.length > 0" class="w-75">
 						<UserCard v-for="user in followers" :key="user.userID" :user="user"></UserCard>
 					</div>
 				</div>
 				<div v-else-if="showFollowingVar">
 					<h3 class="d-flex border-bottom justify-content-between">Following<button @click="hideSideBar" class="btn btn-icon btn-sm">&times;</button></h3>
-					<div class="w-75" v-if="following.length > 0">
+					<div v-if="following.length > 0" class="w-75">
 						<UserCard v-for="user in following" :key="user.userID" :user="user"></UserCard>
 					</div>
 				</div>

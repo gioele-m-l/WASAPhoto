@@ -150,7 +150,7 @@ export default {
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 	</div>
 
-	<div class="post-photo-box" v-if="postPhotoModalVisibility">
+	<div v-if="postPhotoModalVisibility" class="post-photo-box">
 		<h6>Choose a file</h6>
 		<button @click="hidePostPhotoModal">&times;</button>
 		<form @submit.prevent="uploadPhoto">
