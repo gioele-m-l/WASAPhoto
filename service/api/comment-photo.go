@@ -35,7 +35,7 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 	}
 
 	// Check the content of the body
-	if len(comment.Text) < 1 || len(comment.Text) > 255 {
+	if len(comment.Text) < 1 || len(comment.Text) > 256 {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
