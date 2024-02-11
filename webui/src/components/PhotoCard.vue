@@ -212,7 +212,9 @@ import UserCard from './UserCard.vue';
                     <div class="card-header">
                         <div class="d-flex justify-content-between mt-2 align-items-center" v-if="user != null">
                             <UserCard :user="user"></UserCard>
-                            <button @click="deletePhoto" v-if="photo.ownerID == userID" class="btn btn-outline-primary btn-sm">&times;</button>
+                            <div v-if="photo.ownerID == userID">
+                                <button @click="deletePhoto" class="btn btn-outline-primary btn-sm">&times;</button>
+                            </div>
                         </div>
                     </div>
                     <img :src="image" alt="Photo" class="card-img-top">
