@@ -202,7 +202,7 @@ components:
       type: string
       example: Mario
       pattern: "^.*?$"
-      minLength: 0
+      minLength: 1
       maxLength: 255
       readOnly: false
 
