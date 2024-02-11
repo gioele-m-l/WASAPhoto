@@ -349,7 +349,7 @@ export default {
 						<img :src="image" alt="Profile image" style="width: 130px; height: 125px; border-radius: 50%; object-fit: cover; border: 1px solid #000;"/>
 						</div>
 						<div v-else>
-							<img src="https://yourteachingmentor.com/wp-content/uploads/2020/12/istockphoto-1223671392-612x612-1.jpg" style="width: 130px; height: 125px; border-radius: 50%; object-fit: cover; border: 1px solid #000;">
+							<img src="/default-user.jpg" style="width: 130px; height: 125px; border-radius: 50%; object-fit: cover; border: 1px solid #000;">
 						</div>
 						<div v-if="!modalProPic">
 							<button @click="showModalProPic" class="btn btn-icon btn-sm" title="Change profile image"><svg class="feather"><use href="/feather-sprite-v4.29.0.svg#tool"/></svg></button>
