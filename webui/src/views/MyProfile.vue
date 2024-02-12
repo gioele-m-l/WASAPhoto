@@ -346,7 +346,7 @@ export default {
 				<div class="row">
 					<div class="col d-flex align-items-center">
 						<div v-if="image != null">
-						<img :src="image" alt="Profile image" style="width: 130px; height: 125px; border-radius: 50%; object-fit: cover; border: 1px solid #000;"/>
+							<img :src="image" alt="Profile image" style="width: 130px; height: 125px; border-radius: 50%; object-fit: cover; border: 1px solid #000;"/>
 						</div>
 						<div v-else>
 							<img src="/default-user.jpg" style="width: 130px; height: 125px; border-radius: 50%; object-fit: cover; border: 1px solid #000;">

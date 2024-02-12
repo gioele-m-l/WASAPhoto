@@ -179,7 +179,7 @@ export default {
 			<div>
 				<PhotoCard v-for="photo in photosStream" :key="photo.photoID" :photo="photo" @photoUpdated="refresh"/>
 			</div>
-			<div  v-if="photosStream.length%20 == 0">
+			<div v-if="photosStream.length%20 == 0">
 				<button class="btn btn-outline-secondary" @click="loadMorePhotos">More photos</button>
 			</div>
 			<div v-else>

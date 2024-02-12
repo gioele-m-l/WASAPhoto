@@ -420,7 +420,7 @@ export default {
 						<h3>Photos</h3>
 						<div v-if="photos.length>0">
 							<div>
-								<PhotoCard v-if="photos.length > 0" v-for="photo in photos" :key="photo.photoID" :photo="photo" @photoUpdated="refresh"/>
+								<PhotoCard v-for="photo in photos" :key="photo.photoID" :photo="photo" @photoUpdated="refresh"/>
 							</div>
 							<div  v-if="profile['photos-count']%20 != 0 && Math.floor(profile['photos-count']/20) != page">
 								<button class="btn btn-outline-secondary" @click="loadMorePhotos">More photos</button>
