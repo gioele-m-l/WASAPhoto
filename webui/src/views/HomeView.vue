@@ -16,6 +16,11 @@ export default {
         };
     },
     methods: {
+		logout(){
+			sessionStorage.clear();
+			this.$router.replace({ path: "/login"});
+		},
+
 		refresh(){
 			this.errormsg = null;
 			this.page = 0;
@@ -142,6 +147,11 @@ export default {
 				<div class="btn-group me-2">
 					<button type="button" class="btn btn-sm btn-outline-primary" @click="showPostPhotoModal">
 						Post a photo
+					</button>
+				</div>
+				<div class="btn-group me-2">
+					<button type="button" class="btn btn-sm btn-outline-danger" @click="logout">
+						Logout
 					</button>
 				</div>
 			</div>

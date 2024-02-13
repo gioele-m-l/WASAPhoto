@@ -33,6 +33,10 @@ export default {
 		}
 	},
 	methods: {
+		logout(){
+			sessionStorage.clear();
+			this.$router.replace({ path: "/login"});
+		},
 
 		refresh(){
 			this.showBannedVar = false;
@@ -336,6 +340,11 @@ export default {
 			<div class="btn-group me-2">
 				<button type="button" class="btn btn-sm btn-outline-secondary" @click="refresh">
 					Refresh
+				</button>
+			</div>
+			<div class="btn-group me-2">
+				<button type="button" class="btn btn-sm btn-outline-danger" @click="logout">
+					Logout
 				</button>
 			</div>
 		</div>

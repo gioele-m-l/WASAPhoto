@@ -19,7 +19,12 @@ export default {
 		}
 	},
 	methods: {
-        async refresh(){
+        logout(){
+			sessionStorage.clear();
+			this.$router.replace({ path: "/login"});
+		},
+
+        refresh(){
             this.loading = true;
             this.errormsg = false;
             this.username = "";
@@ -79,6 +84,11 @@ export default {
                     Refresh
                 </button>
             </div>
+            <div class="btn-group me-2">
+				<button type="button" class="btn btn-sm btn-outline-danger" @click="logout">
+					Logout
+				</button>
+			</div>
         </div>
     </div>
     <div id="search-box">

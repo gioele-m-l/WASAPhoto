@@ -41,6 +41,10 @@ export default {
 		}
 	},
 	methods: {
+		logout(){
+			sessionStorage.clear();
+			this.$router.replace({ path: "/login"});
+		},
 
 		refresh(){
 			this.showFollowingVar = false;
@@ -355,6 +359,11 @@ export default {
 						Refresh
 					</button>
 				</div>
+				<div class="btn-group me-2">
+				<button type="button" class="btn btn-sm btn-outline-danger" @click="logout">
+					Logout
+				</button>
+			</div>
 			</div>
 		</div>
 		<div class="row vh-100 w-100">
