@@ -360,10 +360,10 @@ export default {
 					</button>
 				</div>
 				<div class="btn-group me-2">
-				<button type="button" class="btn btn-sm btn-outline-danger" @click="logout">
-					Logout
-				</button>
-			</div>
+					<button type="button" class="btn btn-sm btn-outline-danger" @click="logout">
+						Logout
+					</button>
+				</div>
 			</div>
 		</div>
 		<div class="row vh-100 w-100">
